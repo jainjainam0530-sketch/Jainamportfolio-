@@ -1,5 +1,4 @@
-# Professional profile refinement checklist
+# Opening portfolio identity checklist
 
-- [x] Reframe verified background, education, focus, and project intent into a concise professional About narrative.
-- [x] Strengthen the About and opening profile presentation without adding unsupported claims.
-- [x] Validate the updated professional presentation and save the new version.
+- [x] Add a clear, professional Jainam Jain ownership treatment at the beginning of the portfolio.
+- [x] Validate the revised hero identity and save the updated version.
