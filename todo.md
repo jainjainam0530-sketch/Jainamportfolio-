@@ -1,5 +1,5 @@
-# Visible motion enhancement checklist
+# Scroll-reveal choreography checklist
 
-- [x] Define stronger, professional motion moments for loading, first fold, scroll transitions, and interactions.
-- [x] Implement the visible motion system with restrained performance and reduced-motion fallbacks.
-- [x] Validate the enhanced motion experience across desktop and mobile before saving the update.
+- [ ] Define distinct entry behavior for headings, content panels, and information cards.
+- [ ] Add visible scroll-triggered reveals across the portfolio's information sections.
+- [x] Validate reveal pacing, mobile behavior, and reduced-motion fallbacks before saving the update.
