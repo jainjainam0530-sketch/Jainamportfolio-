@@ -71,3 +71,9 @@ The wordmark uses spaced, uppercase **JAINAM** beside the existing folded-path J
 - The portfolio feels current through a rotating, verified “currently exploring” signal, active-section navigation, a paced hero light field, and interactive project depth—not through invented activity metrics or fake updates.
 - Motion is layered: navigation provides orientation, the hero reacts subtly to scroll, cards answer pointer hover, and the Lab continues to offer direct exploration. Each effect has a stable reduced-motion version.
 - The visual system prioritizes a professional editorial pulse over constant spectacle. Dark space remains quiet; Signal Ember appears only when a state is active or a direction is being highlighted.
+
+## Immersive Loader Decisions
+
+- The opening uses a short branded preparation screen with an honest timed progress indicator and a clean exit into the existing hero; it does not claim to load data or simulate background activity.
+- The ghost wordmark, artifact, and narrative copy enter in a stagger after the loader clears, giving the first fold spatial depth without delaying access to navigation or content.
+- Visitors who prefer reduced motion bypass the loading screen and receive the finished hero immediately.

@@ -37,6 +37,9 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [activeNav, setActiveNav] = useState("");
   const [liveFocusIndex, setLiveFocusIndex] = useState(0);
+  const [isImmersiveLoading, setIsImmersiveLoading] = useState(() => typeof window !== "undefined" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const [introReady, setIntroReady] = useState(() => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const [loadProgress, setLoadProgress] = useState(0);
   const cursorRef = useRef<HTMLDivElement>(null);
   const heroGlowRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
@@ -82,6 +85,35 @@ export default function Home() {
     return () => observer.disconnect();
   }, [navigation]);
 
+  useEffect(() => {
+    if (reduceMotion) {
+      setIsImmersiveLoading(false);
+      setIntroReady(true);
+      return;
+    }
+    let frameId = 0;
+    let finishTimer = 0;
+    const startTime = performance.now();
+    const duration = 1050;
+    const animateLoading = (now: number) => {
+      const ratio = Math.min((now - startTime) / duration, 1);
+      setLoadProgress(Math.round(ratio * 100));
+      if (ratio < 1) {
+        frameId = requestAnimationFrame(animateLoading);
+      } else {
+        finishTimer = window.setTimeout(() => {
+          setIsImmersiveLoading(false);
+          setIntroReady(true);
+        }, 180);
+      }
+    };
+    frameId = requestAnimationFrame(animateLoading);
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.clearTimeout(finishTimer);
+    };
+  }, [reduceMotion]);
+
   const updateHeroGlow = (event: React.PointerEvent<HTMLElement>) => {
     if (reduceMotion || !heroGlowRef.current || !window.matchMedia("(pointer: fine)").matches) return;
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -91,6 +123,14 @@ export default function Home() {
 
   return (
     <div className={scrolled ? "signal-site is-scrolled" : "signal-site"}>
+      <AnimatePresence>
+        {isImmersiveLoading ? <motion.div className="immersion-loader" role="status" aria-live="polite" initial={{ opacity: 1 }} exit={{ y: "-105%" }} transition={{ duration: 0.72, ease: [0.77, 0, 0.175, 1] }}>
+          <div className="loader-grid" aria-hidden="true" />
+          <div className="loader-head"><img src="/manus-storage/jainam-mark_d137763b.png" alt="" /><span>JAINAM / SIGNAL EDITION</span></div>
+          <div className="loader-center"><p>Preparing the portfolio</p><strong>{String(loadProgress).padStart(2, "0")}<i>%</i></strong><div><span style={{ transform: `scaleX(${loadProgress / 100})` }} /></div></div>
+          <p className="loader-foot">Build / Learn / Iterate</p>
+        </motion.div> : null}
+      </AnimatePresence>
       <motion.div className="scroll-progress" style={{ scaleX: smoothScroll }} aria-hidden="true" />
       <div className="signal-cursor" ref={cursorRef} aria-hidden="true" />
       <header className="signal-header">
@@ -111,9 +151,9 @@ export default function Home() {
       <main id="top">
         <section className="signal-hero" aria-labelledby="hero-heading" onPointerMove={updateHeroGlow}>
           <div className="hero-responsive-glow" ref={heroGlowRef} aria-hidden="true" />
-          <motion.div className="hero-wordmark" style={reduceMotion ? undefined : { y: heroWordmarkY }} aria-hidden="true">JAINAM</motion.div>
+          <motion.div className="hero-wordmark" initial={reduceMotion ? false : { opacity: 0, scale: 0.96 }} animate={reduceMotion || introReady ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }} transition={{ duration: 0.7, delay: 0.08 }} style={reduceMotion ? undefined : { y: heroWordmarkY }} aria-hidden="true">JAINAM</motion.div>
           <div className="hero-grid-signal">
-            <motion.div className="signal-hero-copy" initial={reduceMotion ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.12 }}>
+            <motion.div className="signal-hero-copy" initial={reduceMotion ? false : { opacity: 0, y: 32 }} animate={reduceMotion || introReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }} transition={{ duration: 0.68, delay: 0.23 }}>
               <p className="hero-label"><span className="signal-pip" />{brand.identity}</p>
               <div className="portfolio-owner"><p><span>{hero.ownerLabel}</span><strong>{hero.ownerName}</strong></p><span className="portfolio-title">{hero.ownerTitle}</span></div>
               <h1 id="hero-heading">Building ideas<br />into <em>intelligent</em><br />products.</h1>
@@ -121,7 +161,7 @@ export default function Home() {
               <div className="hero-buttons"><a href="#work" className="signal-button">Explore selected work <ArrowDownRight size={17} aria-hidden="true" /></a><a href="#about" className="underlined-link">Read the notes <MoveRight size={16} aria-hidden="true" /></a></div>
               <div className="hero-live-signal" aria-live="polite"><span><i />{hero.liveLabel}</span><AnimatePresence mode="wait"><motion.strong key={exploring[liveFocusIndex]} initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={reduceMotion ? undefined : { opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>{exploring[liveFocusIndex]}</motion.strong></AnimatePresence></div>
             </motion.div>
-            <motion.div className="signal-hero-art" style={reduceMotion ? undefined : { y: heroArtifactY }} initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.05 }}>
+            <motion.div className="signal-hero-art" style={reduceMotion ? undefined : { y: heroArtifactY }} initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }} animate={reduceMotion || introReady ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.97 }} transition={{ duration: 0.86, delay: 0.09 }}>
               <img src={hero.art} alt="Anonymous chrome sculpture illuminated by an ember-red ribbon of light" />
               <span className="art-frame frame-one" /><span className="art-frame frame-two" />
               <div className="hero-stage-card"><span>Current state</span><strong>Student / Builder / AI Explorer</strong><small>Ideas in active formation.</small></div>
