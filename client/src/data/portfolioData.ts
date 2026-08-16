@@ -85,33 +85,38 @@ export const portfolioData = {
     {
       index: "01",
       title: "FocusPath",
-      categories: "AI · EdTech · Product Design · Web Development",
-      role: "Founder & Builder",
-      focusLabel: "Focus / Student guidance, productivity, and decision-making",
+      categories: "Career Discovery · EdTech · Product Thinking · Android",
+      role: "Founder, Product Thinker & Developer",
+      focusLabel: "Focus / Interest-led career discovery",
       summary:
-        "An AI-powered platform designed to act as a digital mentor for students — helping them understand their strengths, explore career opportunities, improve productivity, and make better decisions.",
-      status: "In active product design and planning — implementation stack not yet finalized.",
+        "An early student career-guidance app direction for people who need a clearer way to connect their interests with possible career paths and practical next steps.",
+      status: "Early Android build available — continuing product iteration.",
       media: "/manus-storage/jainam-signal-focuspath_a2dda31b.jpg",
+      externalAction: {
+        label: "Download early Android build",
+        detail: "FocusPath 1.0.11 APK · 49.6 MB · Opens MediaFire",
+        href: "https://www.mediafire.com/file/g6vcdjfg4f3nv8g/focuspath-1.0.11.apk/file",
+      },
       contributions: [
-        "Defined the product vision and core user experience.",
-        "Designed strengths-and-weaknesses discovery, career exploration, and guidance concepts.",
-        "Planned productivity, goals, tasks, and study-tracking features.",
-        "Worked on personalized onboarding and student experiences.",
-        "Explored authentication, data-management concepts, supporting web experiences, and product analytics.",
+        "Identified career uncertainty as a student decision-making problem worth exploring.",
+        "Started coding an early Android build and shaped the product direction.",
+        "Defined an interest-led approach to career discovery and clearer next steps.",
+        "Outlined a student experience that keeps exploration understandable rather than overwhelming.",
+        "Framed the next iteration around explainable recommendations and practical guidance.",
       ],
       caseStudy: {
         Problem:
-          "Students need support to understand their strengths, explore career opportunities, improve productivity, and make better decisions.",
-        Insight:
-          "A digital mentor can bring strengths discovery, career exploration, and guidance concepts into one student-focused experience.",
-        Solution:
-          "FocusPath is being designed as an AI-powered platform that supports these areas of student decision-making and productivity.",
-        Product:
-          "Concepts include personalized onboarding, strengths-and-weaknesses discovery, career exploration, guidance, goals, tasks, and study tracking.",
-        Technology: "Implementation stack not yet finalized.",
-        Challenges: "[To be documented]",
-        Outcome: "In active product design and planning.",
-        Learnings: "[To be documented]",
+          "Students often have interests but lack a structured way to translate those interests into career options they can understand and explore.",
+        Role:
+          "I initiated the idea, began coding an early Android build, and defined the product direction, career-discovery flow, and student-focused experience.",
+        "Solution approach":
+          "FocusPath is designed to gather a student’s interests, organize them into clearer areas to explore, and present career paths as an understandable starting point rather than a final verdict.",
+        "Experience principles":
+          "Keep questions simple, explain why a path may be relevant, avoid overwhelming students with choices, and always point toward a practical next action.",
+        "Early build":
+          "An early Android APK is available for review. It represents an active product direction, not a finished career-advice system.",
+        "Next direction":
+          "Improve the interest flow, make the reasoning behind career suggestions more transparent, and test whether students find the paths useful and easy to act on.",
       },
     },
     {
