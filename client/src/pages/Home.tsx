@@ -163,7 +163,7 @@ export default function Home() {
               <div className="hero-live-signal" aria-live="polite"><span><i />{hero.liveLabel}</span><AnimatePresence mode="wait"><motion.strong key={exploring[liveFocusIndex]} initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={reduceMotion ? undefined : { opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>{exploring[liveFocusIndex]}</motion.strong></AnimatePresence></div>
             </motion.div>
             <motion.div className="signal-hero-art" style={reduceMotion ? undefined : { y: heroArtifactY }} initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }} animate={reduceMotion || introReady ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.97 }} transition={{ duration: 0.86, delay: 0.09 }}>
-              <img src={hero.art} alt="Anonymous chrome sculpture illuminated by an ember-red ribbon of light" />
+              <img src={hero.art} alt="Professional editorial portrait of Jainam Jain with a Signal Ember red disc" />
               <span className="art-frame frame-one" /><span className="art-frame frame-two" />
               <div className="hero-stage-card"><span>Current state</span><strong>Student / Builder / AI Explorer</strong><small>Ideas in active formation.</small></div>
             </motion.div>

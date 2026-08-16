@@ -27,7 +27,7 @@ export const portfolioData = {
     process: ["Idea", "Build", "Test", "Iterate", "Launch"],
     primaryCta: "Explore selected work",
     secondaryCta: "Read the notes",
-    art: "/manus-storage/jainam-signal-hero_543adf6e.jpg",
+    art: "/manus-storage/jainam-editorial-portrait_02f4d9e5.png",
   },
   loadingHints: [
     { threshold: 24, label: "Perspective", message: "Start with the problem, not the feature." },

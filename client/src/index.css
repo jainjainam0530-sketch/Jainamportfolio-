@@ -110,3 +110,7 @@
 /* Progress-aware professional hint — content changes with the real preloader milestones. */
 .loader-hint { display: flex; align-items: baseline; gap: 9px; min-height: 18px; margin: 18px 0 0; color: var(--soft)!important; font: 400 10px/1.45 var(--font-sans)!important; letter-spacing: 0!important; text-transform: none!important; }.loader-hint span { flex: 0 0 auto; color: var(--ember-bright); font: 500 8px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }.loader-hint::before { content: ""; width: 15px; height: 1px; margin-bottom: 3px; background: var(--ember); }
 @media (max-width: 620px) { .loader-hint { gap: 7px; margin-top: 16px; font-size: 9px!important; }.loader-hint span { font-size: 7px; }.loader-hint::before { width: 10px; } }
+
+/* Portrait-led hero crop — keep Jainam's face and the Signal Ember disc centered inside the existing editorial frame. */
+.signal-hero-art > img { object-position: center 31%; }
+@media (max-width: 620px) { .signal-hero-art > img { object-position: center 24%; } }
