@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import { portfolioData } from "@/data/portfolioData";
+import { trpc } from "@/lib/trpc";
 
 function SectionKicker({ number, title }: { number: string; title: string }) {
   return <p className="section-kicker"><span>{number}</span>{title}</p>;
@@ -40,6 +41,8 @@ export default function Home() {
   const [isImmersiveLoading, setIsImmersiveLoading] = useState(() => typeof window !== "undefined" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [introReady, setIntroReady] = useState(() => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [loadProgress, setLoadProgress] = useState(0);
+  const [contactForm, setContactForm] = useState({ name: "", email: "", subject: "", message: "", company: "" });
+  const [contactSubmitted, setContactSubmitted] = useState(false);
   const cursorRef = useRef<HTMLDivElement>(null);
   const heroGlowRef = useRef<HTMLDivElement>(null);
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
@@ -55,6 +58,12 @@ export default function Home() {
   const activeLoadingHint = loadingHints.find((hint) => loadProgress <= hint.threshold) ?? loadingHints[loadingHints.length - 1];
   const activeLabNote = lab.notes[activeLab];
   const inView = reduceMotion ? {} : { initial: { opacity: 0, y: 48, scale: 0.985 }, whileInView: { opacity: 1, y: 0, scale: 1 }, viewport: { once: true, amount: 0.14 }, transition: { duration: 0.72 } };
+  const contactMutation = trpc.contact.submit.useMutation({
+    onSuccess: () => {
+      setContactSubmitted(true);
+      setContactForm({ name: "", email: "", subject: "", message: "", company: "" });
+    },
+  });
 
   useEffect(() => {
     const updateScrollState = () => setScrolled(window.scrollY > 16);
@@ -164,6 +173,12 @@ export default function Home() {
     const nextIndex = keyToIndex[event.key];
     setActiveLab(nextIndex);
     labTabRefs.current[nextIndex]?.focus();
+  };
+
+  const handleContactSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setContactSubmitted(false);
+    contactMutation.mutate(contactForm);
   };
 
   return (
@@ -282,7 +297,7 @@ export default function Home() {
         <section className="signal-section resume-spread" aria-labelledby="resume-heading"><motion.div {...inView}><SectionKicker number="13" title="Resume" /></motion.div><motion.div {...inView} transition={{ duration: 0.68, delay: 0.12 }} className="resume-poster"><FileText size={35} aria-hidden="true" /><div><h2 id="resume-heading">{resume.title}</h2><p>{resume.body}</p><small>{resume.fileLabel}</small></div><div className="resume-links">{resumeAvailable ? <><a href={resume.url} target="_blank" rel="noopener noreferrer">View <ExternalLink size={15} aria-hidden="true" /></a><a href={resume.url} download>Download <Download size={15} aria-hidden="true" /></a></> : <><button disabled>View</button><button disabled>Download</button></>}</div></motion.div></section>
       </main>
 
-      <footer id="contact" className="signal-footer" aria-labelledby="contact-heading"><div className="signal-section"><motion.div {...inView}><p className="footer-label">JAINAM / Signal contact</p><div className="footer-layout"><div><h2 id="contact-heading">{contact.title}</h2><p>{contact.body}</p></div><a href={`mailto:${contact.email}`} className="footer-email"><Mail size={18} aria-hidden="true" /> {contact.email}</a></div></motion.div><motion.div {...inView} transition={{ duration: 0.55, delay: 0.14 }} className="footer-bottom"><div className="social-line">{contact.social.map((social) => <a key={social.label} href={social.href} target="_blank" rel="noopener noreferrer"><SocialIcon label={social.label} />{social.label}<ArrowUpRight size={13} aria-hidden="true" /></a>)}</div><div><span>Languages / {contact.languages}</span><span>{brand.positioning}</span></div></motion.div></div></footer>
+      <footer id="contact" className="signal-footer" aria-labelledby="contact-heading"><div className="signal-section"><motion.div {...inView}><p className="footer-label">JAINAM / Signal contact</p><div className="footer-layout"><div><h2 id="contact-heading">{contact.title}</h2><p>{contact.body}</p></div><a href={`mailto:${contact.email}`} className="footer-email"><Mail size={18} aria-hidden="true" /> {contact.email}</a></div></motion.div><motion.form {...inView} transition={{ duration: 0.58, delay: 0.18 }} className="contact-form" onSubmit={handleContactSubmit} noValidate><div className="contact-form-intro"><span>Send a message</span><p>Share a project, opportunity, or question. Your message is stored in Jainam’s portfolio inbox.</p></div><div className="contact-form-grid"><label>Name<input value={contactForm.name} onChange={(event) => setContactForm((current) => ({ ...current, name: event.target.value }))} name="name" autoComplete="name" minLength={2} maxLength={120} required /></label><label>Email<input value={contactForm.email} onChange={(event) => setContactForm((current) => ({ ...current, email: event.target.value }))} name="email" type="email" autoComplete="email" maxLength={320} required /></label><label className="contact-form-wide">Subject<input value={contactForm.subject} onChange={(event) => setContactForm((current) => ({ ...current, subject: event.target.value }))} name="subject" minLength={3} maxLength={160} required /></label><label className="contact-form-wide">Message<textarea value={contactForm.message} onChange={(event) => setContactForm((current) => ({ ...current, message: event.target.value }))} name="message" minLength={15} maxLength={5000} rows={5} required /></label><label className="contact-honeypot" aria-hidden="true">Company<input value={contactForm.company} onChange={(event) => setContactForm((current) => ({ ...current, company: event.target.value }))} name="company" tabIndex={-1} autoComplete="off" /></label></div><div className="contact-form-actions"><button type="submit" disabled={contactMutation.isPending}>{contactMutation.isPending ? "Sending message…" : "Send message"} <ArrowUpRight size={16} aria-hidden="true" /></button><div aria-live="polite">{contactSubmitted ? <p className="contact-success">Message sent. Thank you for reaching out.</p> : null}{contactMutation.error ? <p className="contact-error">{contactMutation.error.message}</p> : null}</div></div></motion.form><motion.div {...inView} transition={{ duration: 0.55, delay: 0.28 }} className="footer-bottom"><div className="social-line">{contact.social.map((social) => <a key={social.label} href={social.href} target="_blank" rel="noopener noreferrer"><SocialIcon label={social.label} />{social.label}<ArrowUpRight size={13} aria-hidden="true" /></a>)}</div><div><span>Languages / {contact.languages}</span><span>{brand.positioning}</span></div></motion.div></div></footer>
     </div>
   );
 }
