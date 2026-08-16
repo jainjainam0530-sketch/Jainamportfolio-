@@ -127,7 +127,7 @@ export default function Home() {
         {isImmersiveLoading ? <motion.div className="immersion-loader" role="status" aria-live="polite" initial={{ opacity: 1 }} exit={{ y: "-105%" }} transition={{ duration: 0.72, ease: [0.77, 0, 0.175, 1] }}>
           <div className="loader-grid" aria-hidden="true" />
           <div className="loader-head"><img src="/manus-storage/jainam-mark_d137763b.png" alt="" /><span>JAINAM / SIGNAL EDITION</span></div>
-          <div className="loader-center"><p>Preparing the portfolio</p><strong>{String(loadProgress).padStart(2, "0")}<i>%</i></strong><div><span style={{ transform: `scaleX(${loadProgress / 100})` }} /></div></div>
+          <div className="loader-center"><p>Preparing the portfolio</p><strong>{String(loadProgress).padStart(2, "0")}<i>%</i></strong><div className="loader-track"><span className="loader-progress" style={{ transform: `scaleX(${loadProgress / 100})` }} /><span className="loader-robot" style={{ left: `${Math.max(4, Math.min(96, loadProgress))}%` }} aria-hidden="true"><i className="robot-sprite"><i className="robot-antenna" /><i className="robot-head"><i className="robot-eye" /><i className="robot-eye" /></i><i className="robot-body" /><i className="robot-leg robot-leg-left" /><i className="robot-leg robot-leg-right" /></i></span></div></div>
           <p className="loader-foot">Build / Learn / Iterate</p>
         </motion.div> : null}
       </AnimatePresence>

@@ -1,5 +1,4 @@
-# Immersive loading enhancement checklist
+# Robot-loading enhancement checklist
 
-- [x] Analyze the supplied reference video for its home-page loading and transition principles.
-- [x] Design a portfolio-specific immersive preloader and first-fold reveal.
-- [x] Implement, validate, and save the accessible loading experience.
+- [ ] Add an original Signal Edition robot that moves along the loader progress line.
+- [x] Validate the robot motion, responsive placement, and reduced-motion fallback before saving the update.
