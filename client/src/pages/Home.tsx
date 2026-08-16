@@ -104,8 +104,9 @@ export default function Home() {
         <section id="about" className="signal-section about-spread" aria-labelledby="about-heading">
           <motion.div {...inView}>
             <SectionKicker number="01" title="About" />
-            <div className="about-headline"><h2 id="about-heading">An early chapter,<br /><em>built with intent.</em></h2><p>{about.body}</p></div>
+            <div className="about-headline about-profile-grid"><div><h2 id="about-heading">{about.title}</h2><p className="about-lede">{about.lead}</p></div><div className="about-statement"><p>{about.body}</p><p className="about-positioning">{brand.positioning}</p></div></div>
           </motion.div>
+          <div className="profile-fact-grid" aria-label="Professional profile details">{about.profileFacts.map((fact, index) => <article key={fact.label}><span>0{index + 1} / {fact.label}</span><p>{fact.value}</p></article>)}</div>
           <div className="interest-magnet" aria-label="Areas of interest">{about.interests.map((interest, index) => <span className={`interest-${index + 1}`} key={interest}>{interest}</span>)}</div>
         </section>
 
@@ -124,7 +125,7 @@ export default function Home() {
                   <span className="project-number">{project.index}</span>
                   <span className="project-stage">{project.status}</span>
                 </div>
-                <div className="project-info"><p>{project.categories}</p><h3>{project.title}</h3><span>{project.role}</span><div className="project-info-bottom"><p>{project.summary}</p><details><summary>Case study <ChevronDown size={15} aria-hidden="true" /></summary><div className="case-grid">{Object.entries(project.caseStudy).map(([label, value]) => <div key={label}><b>{label}</b><p>{value}</p></div>)}</div></details></div></div>
+                <div className="project-info"><p>{project.categories}</p><h3>{project.title}</h3><span>{project.role}</span><span className="project-focus">{project.focusLabel}</span><div className="project-info-bottom"><p>{project.summary}</p><details><summary>Case study <ChevronDown size={15} aria-hidden="true" /></summary><div className="case-grid">{Object.entries(project.caseStudy).map(([label, value]) => <div key={label}><b>{label}</b><p>{value}</p></div>)}</div></details></div></div>
                 {project.contributions.length > 0 ? <div className="project-contributions"><span>Key contributions</span><ul>{project.contributions.map((contribution) => <li key={contribution}>{contribution}</li>)}</ul></div> : null}
               </motion.article>
             ))}

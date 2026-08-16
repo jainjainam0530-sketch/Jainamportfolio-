@@ -64,3 +64,4 @@ The wordmark uses spaced, uppercase **JAINAM** beside the existing folded-path J
 - Cards lift with short physical hover movement; reveals are opacity-and-transform based; the Lab tab panel uses an immediate, focused state transition.
 - All motion degrades cleanly: reduced-motion visitors receive the final layout without scrolling effects, looping movement, or nonessential transitions.
 - Signal Ember remains a line, light source, status marker, or cropped emphasis. Porcelain and near-black carry the main compositional fields; no interaction update introduces a broad ember surface.
+- The compact header lockup repeats the folded-path J, spaced uppercase JAINAM, and a short ember rule; visible project cards name the specific verified workflow or experiment they are exploring.

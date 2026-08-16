@@ -19,16 +19,24 @@ export const portfolioData = {
     eyebrow: "Independent field notes · India",
     headline: "Building ideas into intelligent products.",
     support:
-      "I'm Jainam — a student builder and AI explorer focused on creating useful digital products, experimenting with emerging technologies, and solving real-world problems through software.",
+      "I’m Jainam Jain, a student builder and AI explorer in India focused on useful digital products, emerging technologies, and real-world problems approached through software.",
     process: ["Idea", "Build", "Test", "Iterate", "Launch"],
     primaryCta: "Explore selected work",
     secondaryCta: "Read the notes",
     art: "/manus-storage/jainam-signal-hero_543adf6e.jpg",
   },
   about: {
-    title: "A working record, not a finished story.",
+    title: "A student builder with a product-first lens.",
+    lead:
+      "I am learning by turning observations into product directions — then planning, testing, and improving the experience behind them.",
     body:
-      "Student builder and AI explorer with a strong interest in artificial intelligence, software development, automation, UI/UX, and digital product development. Passionate about transforming ideas into practical digital products and exploring emerging technologies, AI-assisted development, automation, and product design. Not building for its own sake — building, testing, and shipping.",
+      "My interests sit at the intersection of artificial intelligence, software development, automation, UI/UX, and digital product development. I am especially drawn to the early work of shaping an idea: understanding the user, clarifying the opportunity, and mapping a useful experience before it is built.",
+    profileFacts: [
+      { label: "Current role", value: "Student / Builder / AI Explorer" },
+      { label: "Education", value: "Std. 11, Science (PCM) · Sneha Lata Rane College" },
+      { label: "Current focus", value: "JEE preparation and AI-powered products" },
+      { label: "Working method", value: "Build. Learn. Iterate." },
+    ],
     interests: [
       "Artificial Intelligence",
       "Software Development",
@@ -64,6 +72,7 @@ export const portfolioData = {
       title: "FocusPath",
       categories: "AI · EdTech · Product Design · Web Development",
       role: "Founder & Builder",
+      focusLabel: "Focus / Student guidance, productivity, and decision-making",
       summary:
         "An AI-powered platform designed to act as a digital mentor for students — helping them understand their strengths, explore career opportunities, improve productivity, and make better decisions.",
       status: "In active product design and planning — implementation stack not yet finalized.",
@@ -95,6 +104,7 @@ export const portfolioData = {
       title: "LaunchFlow",
       categories: "AI · Automation · Developer Tools · Software Development",
       role: "AI Developer Automation Concept",
+      focusLabel: "Focus / Post-development developer workflows",
       summary:
         "An AI-powered developer assistant concept designed to automate repetitive tasks after software development: source-code analysis, technology-stack detection, project organization, documentation generation, GitHub preparation, configuration generation, commit messages, and deployment workflows.",
       status: "Concept stage — technical architecture not yet finalized.",
@@ -119,6 +129,7 @@ export const portfolioData = {
       title: "Digital Business Bill Book",
       categories: "Business · Automation · Digital Transformation · UI/UX",
       role: "Product Concept & Builder",
+      focusLabel: "Focus / A real family-business billing workflow",
       summary:
         "A digital billing and customer-management solution concept designed to modernize a traditional family-business workflow: customer management, digital billing, bill generation, organized records.",
       status:
@@ -144,6 +155,7 @@ export const portfolioData = {
       title: "Curiox",
       categories: "AI · Coding · Innovation · Entrepreneurship",
       role: "Founder / Builder",
+      focusLabel: "Focus / Student community and future-focused learning",
       summary:
         "A student-focused community concept for ambitious students, coders, technology enthusiasts, and future founders: community building, networking, personal branding, future-focused learning.",
       status: "Concept stage.",
