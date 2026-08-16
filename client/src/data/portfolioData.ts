@@ -19,6 +19,7 @@ export const portfolioData = {
     eyebrow: "Independent field notes · India",
     ownerLabel: "Portfolio of",
     ownerName: "Jainam Jain",
+    ownerTitle: "Software Developer",
     headline: "Building ideas into intelligent products.",
     support:
       "I’m Jainam Jain, a student builder and AI explorer in India focused on useful digital products, emerging technologies, and real-world problems approached through software.",

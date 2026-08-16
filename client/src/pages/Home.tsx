@@ -86,7 +86,7 @@ export default function Home() {
           <div className="hero-grid-signal">
             <motion.div className="signal-hero-copy" initial={reduceMotion ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.12 }}>
               <p className="hero-label"><span className="signal-pip" />{brand.identity}</p>
-              <p className="portfolio-owner"><span>{hero.ownerLabel}</span><strong>{hero.ownerName}</strong></p>
+              <div className="portfolio-owner"><p><span>{hero.ownerLabel}</span><strong>{hero.ownerName}</strong></p><span className="portfolio-title">{hero.ownerTitle}</span></div>
               <h1 id="hero-heading">Building ideas<br />into <em>intelligent</em><br />products.</h1>
               <p>{hero.support}</p>
               <div className="hero-buttons"><a href="#work" className="signal-button">Explore selected work <ArrowDownRight size={17} aria-hidden="true" /></a><a href="#about" className="underlined-link">Read the notes <MoveRight size={16} aria-hidden="true" /></a></div>

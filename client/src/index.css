@@ -69,6 +69,10 @@
 @media (max-width: 990px) { .profile-fact-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }.about-statement { margin-top: 8px; }.about-profile-grid h2 { font-size: clamp(3rem,7vw,5.7rem); } }
 @media (max-width: 620px) { .about-lede { margin-top: 18px; font-size: 1.28rem; }.about-statement { padding-left: 16px; }.about-positioning { margin-top: 22px; font-size: 10px; }.profile-fact-grid { grid-template-columns: 1fr; margin-top: 35px; }.profile-fact-grid article { min-height: 118px; }.profile-fact-grid p { margin-top: 27px; } }
 
+/* Opening title — a precise role marker directly beneath the portfolio owner's name. */
+.portfolio-owner { display: block; }.portfolio-owner p { display: flex; align-items: baseline; gap: 10px; margin: 0; }.portfolio-title { display: block; margin: 7px 0 0 29px; color: var(--ember-bright); font: 500 9px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }.portfolio-owner .portfolio-title { color: var(--ember-bright); }
+@media (max-width: 620px) { .portfolio-owner p { gap: 7px; }.portfolio-title { margin-left: 20px; font-size: 8px; } }
+
 /* Opening ownership treatment — a direct, professional declaration without competing with the portfolio headline. */
 .portfolio-owner { display: flex; align-items: baseline; gap: 10px; margin: 16px 0 0; color: var(--paper); }.portfolio-owner span { color: var(--soft); font: 500 9px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }.portfolio-owner strong { font: 650 clamp(1.2rem,1.75vw,1.65rem)/1 var(--font-display); letter-spacing: -.045em; }.portfolio-owner strong::before { content: ""; display: inline-block; width: 18px; height: 1px; margin: 0 10px 5px 0; background: var(--ember); }
 @media (max-width: 620px) { .portfolio-owner { margin-top: 14px; gap: 7px; }.portfolio-owner span { font-size: 8px; }.portfolio-owner strong { font-size: 1.16rem; }.portfolio-owner strong::before { width: 12px; margin-right: 7px; } }

@@ -1,4 +1,4 @@
-# Opening portfolio identity checklist
+# Opening professional-title checklist
 
-- [x] Add a clear, professional Jainam Jain ownership treatment at the beginning of the portfolio.
-- [x] Validate the revised hero identity and save the updated version.
+- [x] Add the requested Software Developer title beneath Jainam Jain's name in the opening hero.
+- [x] Validate and save the updated opening identity.
