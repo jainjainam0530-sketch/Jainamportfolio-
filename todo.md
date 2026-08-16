@@ -1,5 +1,4 @@
-# JAINAM / LAB content checklist
+# Bold home-page identity checklist
 
-- [x] Draft concise professional exploration notes for all six Lab modules without unsupported completion claims.
-- [x] Add the notes, working questions, and next experiments to the interactive Lab experience.
-- [x] Validate the enriched Lab modules and save the updated portfolio version.
+- [x] Create a prominent Jainam Jain ownership treatment in the first fold.
+- [x] Validate and save the updated bold home-page name design.
