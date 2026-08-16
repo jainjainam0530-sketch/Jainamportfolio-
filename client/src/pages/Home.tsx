@@ -3,7 +3,7 @@
  * All verified claims, project states, contacts, and links remain in ../data/portfolioData.ts.
  */
 import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -35,7 +35,10 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeLab, setActiveLab] = useState(0);
   const [scrolled, setScrolled] = useState(false);
+  const [activeNav, setActiveNav] = useState("");
+  const [liveFocusIndex, setLiveFocusIndex] = useState(0);
   const cursorRef = useRef<HTMLDivElement>(null);
+  const heroGlowRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll();
   const smoothScroll = useSpring(scrollYProgress, { stiffness: 120, damping: 28, restDelta: 0.001 });
@@ -61,6 +64,31 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    if (reduceMotion || exploring.length < 2) return;
+    const intervalId = window.setInterval(() => setLiveFocusIndex((index) => (index + 1) % exploring.length), 2800);
+    return () => window.clearInterval(intervalId);
+  }, [reduceMotion, exploring.length]);
+
+  useEffect(() => {
+    const sections = navigation
+      .map((item) => document.querySelector(item.href))
+      .filter((section): section is HTMLElement => section instanceof HTMLElement);
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => entry.isIntersecting && setActiveNav(`#${entry.target.id}`)),
+      { rootMargin: "-28% 0px -58% 0px", threshold: 0.05 },
+    );
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [navigation]);
+
+  const updateHeroGlow = (event: React.PointerEvent<HTMLElement>) => {
+    if (reduceMotion || !heroGlowRef.current || !window.matchMedia("(pointer: fine)").matches) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    heroGlowRef.current.style.setProperty("--glow-x", `${((event.clientX - bounds.left) / bounds.width) * 100}%`);
+    heroGlowRef.current.style.setProperty("--glow-y", `${((event.clientY - bounds.top) / bounds.height) * 100}%`);
+  };
+
   return (
     <div className={scrolled ? "signal-site is-scrolled" : "signal-site"}>
       <motion.div className="scroll-progress" style={{ scaleX: smoothScroll }} aria-hidden="true" />
@@ -71,17 +99,18 @@ export default function Home() {
           <span>{brand.name}</span>
         </a>
         <nav className="signal-nav" aria-label="Primary navigation">
-          {navigation.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
+          {navigation.map((item) => <a key={item.href} className={activeNav === item.href ? "is-active" : ""} href={item.href}>{item.label}</a>)}
         </nav>
         <a className="header-cta" href={`mailto:${contact.email}`}>Let&apos;s connect <ArrowUpRight size={14} aria-hidden="true" /></a>
         <button className="mobile-menu" type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
-        {menuOpen ? <nav className="signal-mobile-nav" aria-label="Mobile navigation">{navigation.map((item) => <a key={item.href} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</a>)}<a href={`mailto:${contact.email}`}>Let&apos;s connect</a></nav> : null}
+        {menuOpen ? <nav className="signal-mobile-nav" aria-label="Mobile navigation">{navigation.map((item) => <a key={item.href} className={activeNav === item.href ? "is-active" : ""} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</a>)}<a href={`mailto:${contact.email}`}>Let&apos;s connect</a></nav> : null}
       </header>
 
       <main id="top">
-        <section className="signal-hero" aria-labelledby="hero-heading">
+        <section className="signal-hero" aria-labelledby="hero-heading" onPointerMove={updateHeroGlow}>
+          <div className="hero-responsive-glow" ref={heroGlowRef} aria-hidden="true" />
           <motion.div className="hero-wordmark" style={reduceMotion ? undefined : { y: heroWordmarkY }} aria-hidden="true">JAINAM</motion.div>
           <div className="hero-grid-signal">
             <motion.div className="signal-hero-copy" initial={reduceMotion ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.12 }}>
@@ -90,6 +119,7 @@ export default function Home() {
               <h1 id="hero-heading">Building ideas<br />into <em>intelligent</em><br />products.</h1>
               <p>{hero.support}</p>
               <div className="hero-buttons"><a href="#work" className="signal-button">Explore selected work <ArrowDownRight size={17} aria-hidden="true" /></a><a href="#about" className="underlined-link">Read the notes <MoveRight size={16} aria-hidden="true" /></a></div>
+              <div className="hero-live-signal" aria-live="polite"><span><i />{hero.liveLabel}</span><AnimatePresence mode="wait"><motion.strong key={exploring[liveFocusIndex]} initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={reduceMotion ? undefined : { opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>{exploring[liveFocusIndex]}</motion.strong></AnimatePresence></div>
             </motion.div>
             <motion.div className="signal-hero-art" style={reduceMotion ? undefined : { y: heroArtifactY }} initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.05 }}>
               <img src={hero.art} alt="Anonymous chrome sculpture illuminated by an ember-red ribbon of light" />

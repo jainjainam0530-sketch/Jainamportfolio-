@@ -1,4 +1,5 @@
-# Opening professional-title checklist
+# Living portfolio enhancement checklist
 
-- [x] Add the requested Software Developer title beneath Jainam Jain's name in the opening hero.
-- [x] Validate and save the updated opening identity.
+- [x] Define the dynamic storytelling and professional interaction system.
+- [x] Add purposeful live indicators, motion depth, and interactive project exploration.
+- [x] Validate reduced-motion, responsive usability, and visual polish before saving the new version.

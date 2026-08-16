@@ -65,3 +65,9 @@ The wordmark uses spaced, uppercase **JAINAM** beside the existing folded-path J
 - All motion degrades cleanly: reduced-motion visitors receive the final layout without scrolling effects, looping movement, or nonessential transitions.
 - Signal Ember remains a line, light source, status marker, or cropped emphasis. Porcelain and near-black carry the main compositional fields; no interaction update introduces a broad ember surface.
 - The compact header lockup repeats the folded-path J, spaced uppercase JAINAM, and a short ember rule; visible project cards name the specific verified workflow or experiment they are exploring.
+
+## Living Portfolio Decisions
+
+- The portfolio feels current through a rotating, verified “currently exploring” signal, active-section navigation, a paced hero light field, and interactive project depth—not through invented activity metrics or fake updates.
+- Motion is layered: navigation provides orientation, the hero reacts subtly to scroll, cards answer pointer hover, and the Lab continues to offer direct exploration. Each effect has a stable reduced-motion version.
+- The visual system prioritizes a professional editorial pulse over constant spectacle. Dark space remains quiet; Signal Ember appears only when a state is active or a direction is being highlighted.
