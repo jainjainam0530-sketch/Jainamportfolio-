@@ -42,13 +42,16 @@ export default function Home() {
   const [loadProgress, setLoadProgress] = useState(0);
   const cursorRef = useRef<HTMLDivElement>(null);
   const heroGlowRef = useRef<HTMLDivElement>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileNavRef = useRef<HTMLElement>(null);
+  const labTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll();
   const smoothScroll = useSpring(scrollYProgress, { stiffness: 120, damping: 28, restDelta: 0.001 });
   const heroWordmarkY = useTransform(smoothScroll, [0, 0.32], [0, 105]);
   const heroArtifactY = useTransform(smoothScroll, [0, 0.28], [0, -38]);
   const { brand, navigation, hero, loadingHints, about, status, projects, skills, process, strengths, experience, achievements, exploring, philosophy, journey, lab, resume, contact } = portfolioData;
-  const resumeAvailable = !resume.url.startsWith("[");
+  const resumeAvailable = Boolean(resume.url && (resume.url.startsWith("/manus-storage/") || /^https?:\/\//.test(resume.url)));
   const activeLoadingHint = loadingHints.find((hint) => loadProgress <= hint.threshold) ?? loadingHints[loadingHints.length - 1];
   const activeLabNote = lab.notes[activeLab];
   const inView = reduceMotion ? {} : { initial: { opacity: 0, y: 48, scale: 0.985 }, whileInView: { opacity: 1, y: 0, scale: 1 }, viewport: { once: true, amount: 0.14 }, transition: { duration: 0.72 } };
@@ -88,6 +91,30 @@ export default function Home() {
   }, [navigation]);
 
   useEffect(() => {
+    if (!menuOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        mobileMenuButtonRef.current?.focus();
+      }
+    };
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (!mobileNavRef.current?.contains(target) && !mobileMenuButtonRef.current?.contains(target)) setMenuOpen(false);
+    };
+    document.body.style.overflow = "hidden";
+    window.setTimeout(() => mobileNavRef.current?.querySelector<HTMLAnchorElement>("a")?.focus(), 0);
+    document.addEventListener("keydown", closeOnEscape);
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("mousedown", closeOnOutsideClick);
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
     if (reduceMotion) {
       setIsImmersiveLoading(false);
       setIntroReady(true);
@@ -123,6 +150,22 @@ export default function Home() {
     heroGlowRef.current.style.setProperty("--glow-y", `${((event.clientY - bounds.top) / bounds.height) * 100}%`);
   };
 
+  const handleLabTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const keyToIndex: Record<string, number> = {
+      ArrowDown: (index + 1) % lab.modules.length,
+      ArrowRight: (index + 1) % lab.modules.length,
+      ArrowUp: (index - 1 + lab.modules.length) % lab.modules.length,
+      ArrowLeft: (index - 1 + lab.modules.length) % lab.modules.length,
+      Home: 0,
+      End: lab.modules.length - 1,
+    };
+    if (!(event.key in keyToIndex)) return;
+    event.preventDefault();
+    const nextIndex = keyToIndex[event.key];
+    setActiveLab(nextIndex);
+    labTabRefs.current[nextIndex]?.focus();
+  };
+
   return (
     <div className={scrolled ? "signal-site is-scrolled" : "signal-site"}>
       <AnimatePresence>
@@ -144,10 +187,10 @@ export default function Home() {
           {navigation.map((item) => <a key={item.href} className={activeNav === item.href ? "is-active" : ""} href={item.href}>{item.label}</a>)}
         </nav>
         <a className="header-cta" href={`mailto:${contact.email}`}>Let&apos;s connect <ArrowUpRight size={14} aria-hidden="true" /></a>
-        <button className="mobile-menu" type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
+        <button ref={mobileMenuButtonRef} className="mobile-menu" type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen(!menuOpen)}>
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
-        {menuOpen ? <nav className="signal-mobile-nav" aria-label="Mobile navigation">{navigation.map((item) => <a key={item.href} className={activeNav === item.href ? "is-active" : ""} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</a>)}<a href={`mailto:${contact.email}`}>Let&apos;s connect</a></nav> : null}
+        {menuOpen ? <nav ref={mobileNavRef} id="mobile-navigation" className="signal-mobile-nav" aria-label="Mobile navigation">{navigation.map((item) => <a key={item.href} className={activeNav === item.href ? "is-active" : ""} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</a>)}<a href={`mailto:${contact.email}`} onClick={() => setMenuOpen(false)}>Let&apos;s connect</a></nav> : null}
       </header>
 
       <main id="top">
@@ -161,7 +204,7 @@ export default function Home() {
               <h1 id="hero-heading"><motion.span className="hero-headline-line" initial={reduceMotion ? false : { opacity: 0, y: 70 }} animate={reduceMotion || introReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 70 }} transition={{ duration: 0.72, delay: 0.3, ease: "easeOut" }}>Building ideas</motion.span><motion.span className="hero-headline-line" initial={reduceMotion ? false : { opacity: 0, y: 70 }} animate={reduceMotion || introReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 70 }} transition={{ duration: 0.72, delay: 0.42, ease: "easeOut" }}>into <em>intelligent</em></motion.span><motion.span className="hero-headline-line" initial={reduceMotion ? false : { opacity: 0, y: 70 }} animate={reduceMotion || introReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 70 }} transition={{ duration: 0.72, delay: 0.54, ease: "easeOut" }}>products.</motion.span></h1>
               <motion.p initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={reduceMotion || introReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }} transition={{ duration: 0.52, delay: 0.66 }}>{hero.support}</motion.p>
               <motion.div className="hero-profile-strip" initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={reduceMotion || introReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }} transition={{ duration: 0.52, delay: 0.73 }}><div><span>{hero.aboutMeLabel}</span><p>{hero.aboutMe}</p></div><div><span>{hero.expertiseLabel}</span><ul>{hero.expertise.map((item) => <li key={item}>{item}</li>)}</ul></div></motion.div>
-              <motion.div className="hero-buttons" initial={reduceMotion ? false : { opacity: 0, y: 16 }} animate={reduceMotion || introReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }} transition={{ duration: 0.52, delay: 0.82 }}><a href="#work" className="signal-button">Explore selected work <ArrowDownRight size={17} aria-hidden="true" /></a>{resumeAvailable ? <a href={resume.url} target="_blank" rel="noreferrer" className="hero-resume-button">View resume <FileText size={15} aria-hidden="true" /></a> : null}<a href="#about" className="underlined-link">Read the notes <MoveRight size={16} aria-hidden="true" /></a></motion.div>
+              <motion.div className="hero-buttons" initial={reduceMotion ? false : { opacity: 0, y: 16 }} animate={reduceMotion || introReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }} transition={{ duration: 0.52, delay: 0.82 }}><a href="#work" className="signal-button">Explore selected work <ArrowDownRight size={17} aria-hidden="true" /></a>{resumeAvailable ? <a href={resume.url} target="_blank" rel="noopener noreferrer" className="hero-resume-button">View resume <FileText size={15} aria-hidden="true" /></a> : null}<a href="#about" className="underlined-link">Read the notes <MoveRight size={16} aria-hidden="true" /></a></motion.div>
               <motion.div className="hero-live-signal" aria-live="polite" initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={reduceMotion || introReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }} transition={{ duration: 0.45, delay: 0.94 }}><span><i />{hero.liveLabel}</span><AnimatePresence mode="wait"><motion.strong key={exploring[liveFocusIndex]} initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={reduceMotion ? undefined : { opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>{exploring[liveFocusIndex]}</motion.strong></AnimatePresence></motion.div>
             </motion.div>
             <motion.div className="signal-hero-art" style={reduceMotion ? undefined : { y: heroArtifactY }} initial={reduceMotion ? false : { opacity: 0, scale: 0.93 }} animate={reduceMotion || introReady ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.93 }} transition={{ duration: 1.06, delay: 0.24, ease: "easeOut" }}>
@@ -199,7 +242,7 @@ export default function Home() {
                   <span className="project-number">{project.index}</span>
                   <span className="project-stage">{project.status}</span>
                 </motion.div>
-                <motion.div className="project-info" initial={reduceMotion ? false : { opacity: 0, x: index === 0 ? 42 : 18 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: index === 0 ? 0.8 : 0.5, delay: index === 0 ? 0.22 : index * 0.06 }}><p>{project.categories}</p><h3>{project.title}</h3><span>{project.role}</span><span className="project-focus">{project.focusLabel}</span><div className="project-info-bottom"><p>{project.summary}</p><details><summary>Case study <ChevronDown size={15} aria-hidden="true" /></summary><div className="case-grid">{Object.entries(project.caseStudy).map(([label, value]) => <div key={label}><b>{label}</b><p>{value}</p></div>)}</div></details>{"externalAction" in project && project.externalAction ? <motion.a className="project-external-action" href={project.externalAction.href} target="_blank" rel="noreferrer" whileHover={reduceMotion ? undefined : { x: 5 }} whileTap={reduceMotion ? undefined : { scale: 0.98 }}><span><b>{project.externalAction.label}</b><small>{project.externalAction.detail}</small></span><Download size={17} aria-hidden="true" /></motion.a> : null}</div></motion.div>
+                <motion.div className="project-info" initial={reduceMotion ? false : { opacity: 0, x: index === 0 ? 42 : 18 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: index === 0 ? 0.8 : 0.5, delay: index === 0 ? 0.22 : index * 0.06 }}><p>{project.categories}</p><h3>{project.title}</h3><span>{project.role}</span><span className="project-focus">{project.focusLabel}</span><div className="project-info-bottom"><p>{project.summary}</p><details><summary>Case study <ChevronDown size={15} aria-hidden="true" /></summary><div className="case-grid">{Object.entries(project.caseStudy).map(([label, value]) => <div key={label}><b>{label}</b><p>{value}</p></div>)}</div></details>{"externalAction" in project && project.externalAction ? <motion.a className="project-external-action" href={project.externalAction.href} target="_blank" rel="noopener noreferrer" whileHover={reduceMotion ? undefined : { x: 5 }} whileTap={reduceMotion ? undefined : { scale: 0.98 }}><span><b>{project.externalAction.label}</b><small>{project.externalAction.detail}</small></span><Download size={17} aria-hidden="true" /></motion.a> : null}</div></motion.div>
                 {project.contributions.length > 0 ? <div className="project-contributions"><span>Key contributions</span><ul>{project.contributions.map((contribution) => <li key={contribution}>{contribution}</li>)}</ul></div> : null}
               </motion.article>
             ))}
@@ -234,12 +277,12 @@ export default function Home() {
 
         <section className="journey-spread" aria-labelledby="journey-heading"><div className="signal-section"><motion.div {...inView}><SectionKicker number="11" title="Journey" /><div className="journey-title"><h2 id="journey-heading">A direction,<br /><em>not a timeline.</em></h2><span>Onward / 2026</span></div></motion.div><ol>{journey.map((stage, index) => <motion.li {...inView} transition={{ duration: 0.48, delay: index * 0.09 }} key={stage} className={index === journey.length - 1 ? "journey-now" : ""}><span>{String(index + 1).padStart(2, "0")}</span><strong>{stage}</strong></motion.li>)}</ol></div></section>
 
-        <section id="lab" className="lab-spread" aria-labelledby="lab-heading"><div className="lab-inner"><motion.div {...inView} className="lab-title"><SectionKicker number="12" title="Signature feature" /><h2 id="lab-heading">JAINAM /<br /><em>LAB</em></h2><p>{lab.body}</p></motion.div><motion.div {...inView} transition={{ duration: 0.68, delay: 0.14 }} className="lab-interface"><div role="tablist" aria-label="Jainam Lab focus modules">{lab.modules.map((module, index) => <button type="button" role="tab" aria-selected={activeLab === index} onClick={() => setActiveLab(index)} className={activeLab === index ? "is-active" : ""} key={module}><span>0{index + 1}</span>{module}<ArrowUpRight size={15} aria-hidden="true" /></button>)}</div><motion.div key={lab.modules[activeLab]} role="tabpanel" className="lab-output" initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.34 }}><span>Working note / 0{activeLab + 1} · {activeLabNote.stage}</span><h3>{lab.modules[activeLab]}</h3><p className="lab-question">{activeLabNote.question}</p><p className="lab-summary">{activeLabNote.summary}</p><div className="lab-next"><b>Next experiment</b><p>{activeLabNote.next}</p></div><i>Active direction →</i></motion.div></motion.div></div></section>
+        <section id="lab" className="lab-spread" aria-labelledby="lab-heading"><div className="lab-inner"><motion.div {...inView} className="lab-title"><SectionKicker number="12" title="Signature feature" /><h2 id="lab-heading">JAINAM /<br /><em>LAB</em></h2><p>{lab.body}</p></motion.div><motion.div {...inView} transition={{ duration: 0.68, delay: 0.14 }} className="lab-interface"><div role="tablist" aria-label="Jainam Lab focus modules" aria-orientation="vertical">{lab.modules.map((module, index) => <button ref={(element) => { labTabRefs.current[index] = element; }} type="button" id={`lab-tab-${index}`} role="tab" aria-selected={activeLab === index} aria-controls={`lab-panel-${index}`} tabIndex={activeLab === index ? 0 : -1} onKeyDown={(event) => handleLabTabKeyDown(event, index)} onClick={() => setActiveLab(index)} className={activeLab === index ? "is-active" : ""} key={module}><span>0{index + 1}</span>{module}<ArrowUpRight size={15} aria-hidden="true" /></button>)}</div><motion.div key={lab.modules[activeLab]} id={`lab-panel-${activeLab}`} role="tabpanel" aria-labelledby={`lab-tab-${activeLab}`} tabIndex={0} className="lab-output" initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.34 }}><span>Working note / 0{activeLab + 1} · {activeLabNote.stage}</span><h3>{lab.modules[activeLab]}</h3><p className="lab-question">{activeLabNote.question}</p><p className="lab-summary">{activeLabNote.summary}</p><div className="lab-next"><b>Next experiment</b><p>{activeLabNote.next}</p></div><i>Active direction →</i></motion.div></motion.div></div></section>
 
-        <section className="signal-section resume-spread" aria-labelledby="resume-heading"><motion.div {...inView}><SectionKicker number="13" title="Resume" /></motion.div><motion.div {...inView} transition={{ duration: 0.68, delay: 0.12 }} className="resume-poster"><FileText size={35} aria-hidden="true" /><div><h2 id="resume-heading">{resume.title}</h2><p>{resume.body}</p><small>{resume.fileLabel}</small></div><div className="resume-links">{resumeAvailable ? <><a href={resume.url} target="_blank" rel="noreferrer">View <ExternalLink size={15} aria-hidden="true" /></a><a href={resume.url} download>Download <Download size={15} aria-hidden="true" /></a></> : <><button disabled>View</button><button disabled>Download</button></>}</div></motion.div></section>
+        <section className="signal-section resume-spread" aria-labelledby="resume-heading"><motion.div {...inView}><SectionKicker number="13" title="Resume" /></motion.div><motion.div {...inView} transition={{ duration: 0.68, delay: 0.12 }} className="resume-poster"><FileText size={35} aria-hidden="true" /><div><h2 id="resume-heading">{resume.title}</h2><p>{resume.body}</p><small>{resume.fileLabel}</small></div><div className="resume-links">{resumeAvailable ? <><a href={resume.url} target="_blank" rel="noopener noreferrer">View <ExternalLink size={15} aria-hidden="true" /></a><a href={resume.url} download>Download <Download size={15} aria-hidden="true" /></a></> : <><button disabled>View</button><button disabled>Download</button></>}</div></motion.div></section>
       </main>
 
-      <footer id="contact" className="signal-footer" aria-labelledby="contact-heading"><div className="signal-section"><motion.div {...inView}><p className="footer-label">JAINAM / Signal contact</p><div className="footer-layout"><div><h2 id="contact-heading">{contact.title}</h2><p>{contact.body}</p></div><a href={`mailto:${contact.email}`} className="footer-email"><Mail size={18} aria-hidden="true" /> {contact.email}</a></div></motion.div><motion.div {...inView} transition={{ duration: 0.55, delay: 0.14 }} className="footer-bottom"><div className="social-line">{contact.social.map((social) => <a key={social.label} href={social.href} target="_blank" rel="noreferrer"><SocialIcon label={social.label} />{social.label}<ArrowUpRight size={13} aria-hidden="true" /></a>)}</div><div><span>Languages / {contact.languages}</span><span>{brand.positioning}</span></div></motion.div></div></footer>
+      <footer id="contact" className="signal-footer" aria-labelledby="contact-heading"><div className="signal-section"><motion.div {...inView}><p className="footer-label">JAINAM / Signal contact</p><div className="footer-layout"><div><h2 id="contact-heading">{contact.title}</h2><p>{contact.body}</p></div><a href={`mailto:${contact.email}`} className="footer-email"><Mail size={18} aria-hidden="true" /> {contact.email}</a></div></motion.div><motion.div {...inView} transition={{ duration: 0.55, delay: 0.14 }} className="footer-bottom"><div className="social-line">{contact.social.map((social) => <a key={social.label} href={social.href} target="_blank" rel="noopener noreferrer"><SocialIcon label={social.label} />{social.label}<ArrowUpRight size={13} aria-hidden="true" /></a>)}</div><div><span>Languages / {contact.languages}</span><span>{brand.positioning}</span></div></motion.div></div></footer>
     </div>
   );
 }

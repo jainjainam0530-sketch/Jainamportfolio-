@@ -1,5 +1,6 @@
-# FocusPath interaction enhancement checklist
+# Professional debugging and QA checklist
 
-- [x] Define distinctive scroll and hover interactions for the FocusPath feature case study.
-- [x] Add visible motion to FocusPath content, case-study expansion, and the Android build action.
-- [x] Validate the enhanced interactions across desktop, mobile, and reduced-motion settings.
+- [x] Establish build, type, runtime, and asset-health baselines.
+- [x] Test navigation, interactive modules, resume, and external project actions across responsive states.
+- [x] Review and remediate confirmed console, network, accessibility, or visual regressions.
+- [x] Re-run build and regression checks, then save the validated stable version.
