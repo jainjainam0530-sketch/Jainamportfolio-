@@ -47,8 +47,9 @@ export default function Home() {
   const smoothScroll = useSpring(scrollYProgress, { stiffness: 120, damping: 28, restDelta: 0.001 });
   const heroWordmarkY = useTransform(smoothScroll, [0, 0.32], [0, 105]);
   const heroArtifactY = useTransform(smoothScroll, [0, 0.28], [0, -38]);
-  const { brand, navigation, hero, about, status, projects, skills, process, strengths, experience, achievements, exploring, philosophy, journey, lab, resume, contact } = portfolioData;
+  const { brand, navigation, hero, loadingHints, about, status, projects, skills, process, strengths, experience, achievements, exploring, philosophy, journey, lab, resume, contact } = portfolioData;
   const resumeAvailable = !resume.url.startsWith("[");
+  const activeLoadingHint = loadingHints.find((hint) => loadProgress <= hint.threshold) ?? loadingHints[loadingHints.length - 1];
   const inView = reduceMotion ? {} : { initial: { opacity: 0, y: 28 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.14 }, transition: { duration: 0.52 } };
 
   useEffect(() => {
@@ -127,7 +128,7 @@ export default function Home() {
         {isImmersiveLoading ? <motion.div className="immersion-loader" role="status" aria-live="polite" initial={{ opacity: 1 }} exit={{ y: "-105%" }} transition={{ duration: 0.72, ease: [0.77, 0, 0.175, 1] }}>
           <div className="loader-grid" aria-hidden="true" />
           <div className="loader-head"><img src="/manus-storage/jainam-mark_d137763b.png" alt="" /><span>JAINAM / SIGNAL EDITION</span></div>
-          <div className="loader-center"><p>Preparing the portfolio</p><strong>{String(loadProgress).padStart(2, "0")}<i>%</i></strong><div className="loader-track"><span className="loader-progress" style={{ transform: `scaleX(${loadProgress / 100})` }} /><span className="loader-robot" style={{ left: `${Math.max(4, Math.min(96, loadProgress))}%` }} aria-hidden="true"><i className="robot-sprite"><i className="robot-antenna" /><i className="robot-head"><i className="robot-eye" /><i className="robot-eye" /></i><i className="robot-body" /><i className="robot-leg robot-leg-left" /><i className="robot-leg robot-leg-right" /></i></span></div></div>
+          <div className="loader-center"><p>Preparing the portfolio</p><strong>{String(loadProgress).padStart(2, "0")}<i>%</i></strong><div className="loader-track"><span className="loader-progress" style={{ transform: `scaleX(${loadProgress / 100})` }} /><span className="loader-robot" style={{ left: `${Math.max(4, Math.min(96, loadProgress))}%` }} aria-hidden="true"><i className="robot-sprite"><i className="robot-antenna" /><i className="robot-head"><i className="robot-eye" /><i className="robot-eye" /></i><i className="robot-body" /><i className="robot-leg robot-leg-left" /><i className="robot-leg robot-leg-right" /></i></span></div><AnimatePresence mode="wait"><motion.p className="loader-hint" key={activeLoadingHint.label} initial={reduceMotion ? false : { opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={reduceMotion ? undefined : { opacity: 0, y: -5 }} transition={{ duration: 0.18 }}><span>0{loadingHints.indexOf(activeLoadingHint) + 1} / {activeLoadingHint.label}</span>{activeLoadingHint.message}</motion.p></AnimatePresence></div>
           <p className="loader-foot">Build / Learn / Iterate</p>
         </motion.div> : null}
       </AnimatePresence>

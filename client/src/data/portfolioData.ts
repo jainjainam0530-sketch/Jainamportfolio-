@@ -29,6 +29,12 @@ export const portfolioData = {
     secondaryCta: "Read the notes",
     art: "/manus-storage/jainam-signal-hero_543adf6e.jpg",
   },
+  loadingHints: [
+    { threshold: 24, label: "Perspective", message: "Start with the problem, not the feature." },
+    { threshold: 48, label: "Clarity", message: "Useful products fit a real workflow." },
+    { threshold: 74, label: "Iteration", message: "Build a small version, learn, then refine." },
+    { threshold: 100, label: "Direction", message: "Ideas become products through deliberate steps." },
+  ],
   about: {
     title: "A student builder with a product-first lens.",
     lead:

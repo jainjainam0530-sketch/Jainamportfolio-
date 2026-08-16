@@ -1,4 +1,4 @@
-# Robot-loading enhancement checklist
+# Dynamic loading-hint checklist
 
-- [ ] Add an original Signal Edition robot that moves along the loader progress line.
-- [x] Validate the robot motion, responsive placement, and reduced-motion fallback before saving the update.
+- [x] Define concise portfolio-specific hints for meaningful progress milestones.
+- [x] Display and validate the changing hints beneath the immersive loader progress bar.
