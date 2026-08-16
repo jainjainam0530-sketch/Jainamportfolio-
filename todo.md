@@ -1,8 +1,5 @@
-# Contact form and performance checklist
+# Public portfolio authentication-removal checklist
 
-- [x] Define an honest, functional visitor message-delivery flow and accessible contact form fields.
-- [x] Implement the message form, validation, and response state in the portfolio footer.
-- [x] Split noncritical animation loading or optimize bundle chunks without changing the user experience.
-- [x] Validate the message flow, responsive form, accessibility, and final production build.
-- [x] Resolve the full-stack scaffold merge conflicts while preserving the existing Signal Edition portfolio.
-- [x] Add a contact-message schema and public submission procedure, then apply the database migration.
+- [x] Identify every sign-in, authentication, and session prompt exposed to public visitors.
+- [x] Remove the unused public sign-in system while preserving public contact-message submission.
+- [x] Validate the public portfolio, contact form, and production build after the simplification.
