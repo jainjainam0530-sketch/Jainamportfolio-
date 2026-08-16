@@ -24,6 +24,11 @@ export const portfolioData = {
     headline: "Building ideas into intelligent products.",
     support:
       "I’m Jainam Jain, a student builder and AI explorer in India focused on useful digital products, emerging technologies, and real-world problems approached through software.",
+    aboutMeLabel: "About me",
+    aboutMe:
+      "I turn early observations into focused product directions, then learn through planning, building, and iteration.",
+    expertiseLabel: "Expertise",
+    expertise: ["AI & intelligent products", "Software development", "Automation & product thinking"],
     process: ["Idea", "Build", "Test", "Iterate", "Launch"],
     primaryCta: "Explore selected work",
     secondaryCta: "Read the notes",

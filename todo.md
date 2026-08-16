@@ -1,4 +1,5 @@
-# Bold home-page identity checklist
+# Home-page professional profile checklist
 
-- [x] Create a prominent Jainam Jain ownership treatment in the first fold.
-- [x] Validate and save the updated bold home-page name design.
+- [x] Add a concise About Me and verified Expertise summary to the first fold.
+- [x] Add a prominent working resume button linked to the verified PDF.
+- [x] Validate the enhanced home-page profile layout and save the update.
