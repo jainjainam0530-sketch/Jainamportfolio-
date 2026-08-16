@@ -290,7 +290,6 @@ export const portfolioData = {
     title: "JAINAM / LAB",
     body:
       "An active index of the areas I am currently exploring. Select a module to open its working note.",
-    note: "No public notes have been added yet.",
     modules: [
       "Artificial Intelligence",
       "AI Agents",
@@ -298,6 +297,44 @@ export const portfolioData = {
       "Product Development",
       "Advanced Software Development",
       "Human + AI Interaction",
+    ],
+    notes: [
+      {
+        stage: "Exploration draft",
+        question: "How can an AI tool be genuinely useful while making its uncertainty easy to understand?",
+        summary: "I am interested in assistants that help people move from a vague question to a clearer next action. The design challenge is not only producing an answer; it is showing what the system knows, what it is inferring, and where a person should make the final decision.",
+        next: "Map a simple decision-support flow with explicit confidence and review points.",
+      },
+      {
+        stage: "Exploration draft",
+        question: "What should an agent handle automatically, and where should a person remain in control?",
+        summary: "Agentic systems are most interesting when they reduce repetitive effort without making a workflow opaque. I am exploring task boundaries, tool permissions, and approval moments that keep an assistant useful without making it overconfident.",
+        next: "Sketch a task agent that proposes actions, requests approval, and records a clear activity trail.",
+      },
+      {
+        stage: "Exploration draft",
+        question: "Which small repetitive tasks are worth automating first?",
+        summary: "Good automation starts with a workflow that is frequent, predictable, and frustrating enough to deserve attention. I am looking at how triggers, simple rules, and clear exceptions can make a process faster without creating a system that is difficult to trust or maintain.",
+        next: "Document one everyday workflow as a trigger, action, exception, and review loop.",
+      },
+      {
+        stage: "Exploration draft",
+        question: "How can an early product idea become specific enough to test?",
+        summary: "Before building, I want to understand the person, the moment, and the smallest useful outcome. This note focuses on turning an observation into a focused problem statement, a simple user flow, and one testable assumption instead of starting with a long feature list.",
+        next: "Create a one-page concept brief for a real workflow and define its smallest useful version.",
+      },
+      {
+        stage: "Exploration draft",
+        question: "What makes a technical system easier to extend after its first version?",
+        summary: "I am studying how good structure can make future changes less risky. Clear responsibilities, predictable data flow, readable components, and practical documentation matter because they let a system grow without becoming confusing to the people building it.",
+        next: "Break down a small feature into interface, state, data, and test responsibilities before implementation.",
+      },
+      {
+        stage: "Exploration draft",
+        question: "How should people understand, guide, and challenge AI in a product experience?",
+        summary: "Human–AI interaction should make a person feel more capable, not less involved. I am exploring how interface language, clear controls, feedback, and reversible actions can help people understand what an AI system is doing and decide when to rely on it.",
+        next: "Prototype an AI-assisted screen with a visible rationale, editable output, and a simple undo path.",
+      },
     ],
   },
   resume: {
