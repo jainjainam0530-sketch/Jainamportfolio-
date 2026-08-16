@@ -56,3 +56,11 @@ The wordmark uses spaced, uppercase **JAINAM** beside the existing folded-path J
 - Warm orange-red is a navigational and compositional device, not a site-wide gradient.
 - Signal Ember is limited to illumination, labels, active states, rules, and selected visual crops; the achievement and contact sections return to near-black gallery spreads rather than becoming large color fields.
 - Each major spread includes one recognisable Signal Edition device: ghost type, asymmetric composition, image framing, or an evidence-labelled visual card.
+
+## Motion Decisions
+
+- Scroll is accompanied by a restrained progress line, a small cursor signal on fine pointers, and a slow parallax relationship between the hero wordmark and artifact.
+- Marquee bands carry recurring brand language between key spreads, but they remain decoration rather than a source of content or a motion requirement.
+- Cards lift with short physical hover movement; reveals are opacity-and-transform based; the Lab tab panel uses an immediate, focused state transition.
+- All motion degrades cleanly: reduced-motion visitors receive the final layout without scrolling effects, looping movement, or nonessential transitions.
+- Signal Ember remains a line, light source, status marker, or cropped emphasis. Porcelain and near-black carry the main compositional fields; no interaction update introduces a broad ember surface.

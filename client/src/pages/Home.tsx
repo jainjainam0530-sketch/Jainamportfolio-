@@ -2,8 +2,8 @@
  * Signal Edition — a black-and-ember editorial portfolio inspired by supplied references.
  * All verified claims, project states, contacts, and links remain in ../data/portfolioData.ts.
  */
-import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -34,13 +34,37 @@ function SocialIcon({ label }: { label: string }) {
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeLab, setActiveLab] = useState(0);
+  const [scrolled, setScrolled] = useState(false);
+  const cursorRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll();
+  const smoothScroll = useSpring(scrollYProgress, { stiffness: 120, damping: 28, restDelta: 0.001 });
+  const heroWordmarkY = useTransform(smoothScroll, [0, 0.32], [0, 105]);
+  const heroArtifactY = useTransform(smoothScroll, [0, 0.28], [0, -38]);
   const { brand, navigation, hero, about, status, projects, skills, process, strengths, experience, achievements, exploring, philosophy, journey, lab, resume, contact } = portfolioData;
   const resumeAvailable = !resume.url.startsWith("[");
   const inView = reduceMotion ? {} : { initial: { opacity: 0, y: 28 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.14 }, transition: { duration: 0.52 } };
 
+  useEffect(() => {
+    const updateScrollState = () => setScrolled(window.scrollY > 16);
+    const updateCursor = (event: PointerEvent) => {
+      if (!cursorRef.current || !window.matchMedia("(pointer: fine)").matches) return;
+      cursorRef.current.style.setProperty("--cursor-x", `${event.clientX}px`);
+      cursorRef.current.style.setProperty("--cursor-y", `${event.clientY}px`);
+    };
+    updateScrollState();
+    window.addEventListener("scroll", updateScrollState, { passive: true });
+    window.addEventListener("pointermove", updateCursor, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("pointermove", updateCursor);
+    };
+  }, []);
+
   return (
-    <div className="signal-site">
+    <div className={scrolled ? "signal-site is-scrolled" : "signal-site"}>
+      <motion.div className="scroll-progress" style={{ scaleX: smoothScroll }} aria-hidden="true" />
+      <div className="signal-cursor" ref={cursorRef} aria-hidden="true" />
       <header className="signal-header">
         <a className="signal-brand" href="#top" aria-label="Jainam — back to top">
           <img src="/manus-storage/jainam-mark_d137763b.png" alt="" />
@@ -58,7 +82,7 @@ export default function Home() {
 
       <main id="top">
         <section className="signal-hero" aria-labelledby="hero-heading">
-          <div className="hero-wordmark" aria-hidden="true">JAINAM</div>
+          <motion.div className="hero-wordmark" style={reduceMotion ? undefined : { y: heroWordmarkY }} aria-hidden="true">JAINAM</motion.div>
           <div className="hero-grid-signal">
             <motion.div className="signal-hero-copy" initial={reduceMotion ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.12 }}>
               <p className="hero-label"><span className="signal-pip" />{brand.identity}</p>
@@ -66,7 +90,7 @@ export default function Home() {
               <p>{hero.support}</p>
               <div className="hero-buttons"><a href="#work" className="signal-button">Explore selected work <ArrowDownRight size={17} aria-hidden="true" /></a><a href="#about" className="underlined-link">Read the notes <MoveRight size={16} aria-hidden="true" /></a></div>
             </motion.div>
-            <motion.div className="signal-hero-art" initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.05 }}>
+            <motion.div className="signal-hero-art" style={reduceMotion ? undefined : { y: heroArtifactY }} initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.05 }}>
               <img src={hero.art} alt="Anonymous chrome sculpture illuminated by an ember-red ribbon of light" />
               <span className="art-frame frame-one" /><span className="art-frame frame-two" />
               <div className="hero-stage-card"><span>Current state</span><strong>Student / Builder / AI Explorer</strong><small>Ideas in active formation.</small></div>
@@ -74,6 +98,8 @@ export default function Home() {
           </div>
           <div className="hero-scroll"><span>Scroll to explore</span><span>01 / 13</span></div>
         </section>
+
+        <div className="signal-ticker" aria-hidden="true"><div className="ticker-track"><span>BUILD · LEARN · ITERATE</span><b>✦</b><span>JAINAM / SIGNAL EDITION</span><b>✦</b><span>IDEAS IN ACTIVE FORMATION</span><b>✦</b><span>BUILD · LEARN · ITERATE</span><b>✦</b><span>JAINAM / SIGNAL EDITION</span><b>✦</b></div></div>
 
         <section id="about" className="signal-section about-spread" aria-labelledby="about-heading">
           <motion.div {...inView}>
@@ -92,7 +118,7 @@ export default function Home() {
           <div className="work-heading"><div><SectionKicker number="03" title="Selected work" /><h2 id="work-heading">The work,<br /><em>before the proof.</em></h2></div><p>Each record keeps the present state of the work visible. No concept is presented as a shipped product.</p></div>
           <div className="project-gallery">
             {projects.map((project, index) => (
-              <motion.article {...inView} transition={{ duration: 0.5, delay: index * 0.04 }} key={project.title} className={index === 0 ? "project-feature" : "project-card"}>
+              <motion.article {...inView} whileHover={reduceMotion ? undefined : { y: -7 }} transition={{ duration: 0.5, delay: index * 0.04 }} key={project.title} className={index === 0 ? "project-feature" : "project-card"}>
                 <div className="project-image-wrap">
                   {"media" in project && project.media ? <img src={project.media} alt={`Abstract visual for ${project.title}`} /> : <div className="fallback-art"><span>J</span></div>}
                   <span className="project-number">{project.index}</span>
@@ -104,6 +130,8 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        <div className="signal-ticker ticker-paper" aria-hidden="true"><div className="ticker-track"><span>FOCUS / DIRECTION / SYSTEMS</span><b>✦</b><span>THE WORK BEFORE THE PROOF</span><b>✦</b><span>FOCUS / DIRECTION / SYSTEMS</span><b>✦</b><span>THE WORK BEFORE THE PROOF</span><b>✦</b></div></div>
 
         <section className="capability-spread" aria-labelledby="capabilities-heading">
           <div className="signal-section"><SectionKicker number="04" title="Capabilities" /><div className="capability-intro"><h2 id="capabilities-heading">Tools for thinking<br /><em>in public.</em></h2><p>Grouped by the work they support, without invented proficiency levels.</p></div><div className="capability-poster-grid">{skills.map((group, index) => <motion.article {...inView} transition={{ duration: 0.4, delay: index * 0.04 }} key={group.title} className={`capability-poster poster-${index + 1}`}><span>0{index + 1}</span><h3>{group.title}</h3><ul>{group.items.map((item) => <li key={item}>{item}</li>)}</ul><i>J</i></motion.article>)}</div></div>
@@ -123,7 +151,7 @@ export default function Home() {
           <SectionKicker number="07" title="Building experience" /><article><span>{experience.label}</span><h2 id="experience-heading">{experience.title}</h2><p>{experience.description}</p><i aria-hidden="true">J</i></article>
         </section>
 
-        <section className="achievement-spread" aria-labelledby="achievements-heading"><div className="signal-section"><SectionKicker number="08" title={achievements.title} /><div className="achievement-card"><span>Current record</span><h2 id="achievements-heading">{achievements.detail}</h2><p>No confirmed achievements or milestones have been added yet.</p><div className="achievement-orbit" aria-hidden="true"><i /><b /></div></div></div></section>
+        <section className="achievement-spread" aria-labelledby="achievements-heading"><div className="signal-section"><SectionKicker number="08" title={achievements.title} /><div className="achievement-card"><span>Milestone record / not yet documented</span><h2 id="achievements-heading">{achievements.detail}</h2><p>No confirmed achievements or milestones have been added yet.</p><div className="achievement-orbit" aria-hidden="true"><i /><b /></div></div></div></section>
 
         <section className="signal-section exploring-spread" aria-labelledby="exploring-heading"><SectionKicker number="09" title="Currently exploring" /><h2 id="exploring-heading">Questions worth<br /><em>staying with.</em></h2><div className="exploration-grid">{exploring.map((topic, index) => <span key={topic} className={`explore-${index + 1}`}>{topic}<i>{String(index + 1).padStart(2, "0")}</i></span>)}</div></section>
 
@@ -136,7 +164,7 @@ export default function Home() {
         <section className="signal-section resume-spread" aria-labelledby="resume-heading"><SectionKicker number="13" title="Resume" /><div className="resume-poster"><FileText size={35} aria-hidden="true" /><div><h2 id="resume-heading">{resume.title}</h2><p>{resume.body}</p><small>{resume.fileLabel}</small></div><div className="resume-links">{resumeAvailable ? <><a href={resume.url} target="_blank" rel="noreferrer">View <ExternalLink size={15} aria-hidden="true" /></a><a href={resume.url} download>Download <Download size={15} aria-hidden="true" /></a></> : <><button disabled>View</button><button disabled>Download</button></>}</div></div></section>
       </main>
 
-      <footer id="contact" className="signal-footer" aria-labelledby="contact-heading"><div className="signal-section"><p className="footer-label">Contact / start here</p><div className="footer-layout"><div><h2 id="contact-heading">{contact.title}</h2><p>{contact.body}</p></div><a href={`mailto:${contact.email}`} className="footer-email"><Mail size={18} aria-hidden="true" /> {contact.email}</a></div><div className="footer-bottom"><div className="social-line">{contact.social.map((social) => <a key={social.label} href={social.href} target="_blank" rel="noreferrer"><SocialIcon label={social.label} />{social.label}<ArrowUpRight size={13} aria-hidden="true" /></a>)}</div><div><span>Languages / {contact.languages}</span><span>{brand.positioning}</span></div></div></div></footer>
+      <footer id="contact" className="signal-footer" aria-labelledby="contact-heading"><div className="signal-section"><p className="footer-label">JAINAM / Signal contact</p><div className="footer-layout"><div><h2 id="contact-heading">{contact.title}</h2><p>{contact.body}</p></div><a href={`mailto:${contact.email}`} className="footer-email"><Mail size={18} aria-hidden="true" /> {contact.email}</a></div><div className="footer-bottom"><div className="social-line">{contact.social.map((social) => <a key={social.label} href={social.href} target="_blank" rel="noreferrer"><SocialIcon label={social.label} />{social.label}<ArrowUpRight size={13} aria-hidden="true" /></a>)}</div><div><span>Languages / {contact.languages}</span><span>{brand.positioning}</span></div></div></div></footer>
     </div>
   );
 }
