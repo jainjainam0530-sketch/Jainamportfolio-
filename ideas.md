@@ -1,71 +1,58 @@
-# Jainam Portfolio — Design Directions
+# Jainam Portfolio — Reference-Led Redesign
 
-## Three directions considered
+## Reference ground truth
 
-### Theme Name: Obsidian Field Notes
-**Very Brief Intro:** A dark editorial portfolio that treats product thinking like a living research notebook: deliberate pages, fine ruled lines, brass wayfinding, and spacious compositions. It feels candid, capable, and unfinished in the best sense—a builder’s workbench rather than a glossy agency site.
+The supplied references point toward an expressive, image-led personal portfolio rather than a quiet research notebook. Their shared principles are high-impact hero composition, oversized display type, sharply choreographed visual layers, modular project cards, close-cropped editorial imagery, an assertive dark mode, and one warm red-orange signal color. They are design references only: Jainam’s website must not reuse their logos, people, copy, claims, exact layouts, or invented social proof.
 
-**Probability:** 0.04
-
-### Theme Name: Paper Systems
-**Very Brief Intro:** A high-contrast archival layout built around off-white paper, ink-black type, and technical annotation. The emotional register is analytical and human, with the quiet confidence of a well-considered product brief.
-
-**Probability:** 0.08
-
-### Theme Name: Signal Room
-**Very Brief Intro:** A dim, focused studio environment where clean information panels sit beside abstract computational artifacts. It would feel exploratory and intelligent without becoming a neon or dashboard cliché.
-
-**Probability:** 0.02
-
-## Chosen direction: Obsidian Field Notes
+## Chosen direction: Signal Edition
 
 ### Design Movement
-Contemporary **editorial minimalism** crossed with a **research notebook**. The portfolio looks like a sequence of crafted records about a young builder’s active body of work, rather than a SaaS landing page or an academic résumé.
+**Digital editorial / fashion-tech art direction.** Signal Edition presents Jainam like an emerging builder with a recognizable visual point of view: pages feel like an independent design magazine cover meeting an experimental product studio.
 
 ### Core Principles
-1. **Evidence over theatre:** Case studies articulate honest project stage and thinking; quiet status markers replace invented proof.
-2. **Editorial pacing:** Broad negative space, asymmetric columns, deliberate ruled dividers, and typographic scale create a reading experience.
-3. **Warm precision:** Obsidian and graphite establish focus; a sparing brass tone acts like a highlighter on meaningful actions and active states.
-4. **One place for play:** The JAINAM / LAB section carries the most expressive interaction; everything around it remains quiet and legible.
+1. **Impact before explanation:** The first fold pairs decisive scale with a visual artifact; supporting context stays close and specific.
+2. **Editorial collision:** Oversized type, cropped images, and small technical labels overlap with a controlled, poster-like tension.
+3. **Evidence remains visible:** Project stage, status, and placeholders appear as clear micro-labels rather than being buried beneath visuals.
+4. **Curated change of pace:** Dense visual modules alternate with calm reading sections so the page feels designed, not crowded.
 
 ### Color Philosophy
-The site uses near-black obsidian as a distraction-free reading room, softened with graphite rather than pure black. A muted brass accent functions as restrained lighting—a signal for action, selection, and inquiry—not a decorative wash. Ink, smoke, and bone create comfortable editorial contrast.
+Near-black is the main gallery wall. **Signal Ember #FF4A13** is the ownable energy: a saturated orange-red reserved for hero illumination, active controls, and important visual crops. Soft porcelain #F3F0EA gives pauses and editorial contrast. Blue-black is used only as an atmospheric shadow, never as a second accent.
 
 ### Layout Paradigm
-The page is composed as a long **field notebook**. A vertical rail, section indices, and uneven editorial columns guide the reader through separate records. Hero content sits left with a process card offset right; later sections alternate between wide reading columns and structured side notes. It should never resemble a centered card-grid template.
+The page becomes an **editorial feature spread**. The hero is a full-bleed, dark-framed cover with giant JAINAM lettering layered around a custom visual artifact. Project entries move into an asymmetric mosaic of record cards and “case study open” panels. Supporting sections are presented as intentionally varied spreads rather than repeated horizontal rails.
 
 ### Signature Elements
-1. A persistent brass **field marker** on the left rail that locates the visitor in the scroll narrative.
-2. Fine horizontal **ledger rules** and corner registration marks that create a research-page rhythm.
-3. The JAINAM / LAB as a suite of expandable **focus modules** with individual themes and thoughtful empty-state language.
+1. **Oversized ghost typography** that interacts with—not obscures—key hero and project imagery.
+2. **Ember frame lighting:** precise orange-red gradient borders, thin rules, and active tabs used as directional energy.
+3. **Editorial evidence cards:** small, labelled modules for role, status, contribution, and project stage.
 
 ### Interaction Philosophy
-Interaction is precise, quiet, and intentional. Buttons gently pull toward the pointer on larger devices; project records open with decisive, accessible disclosure motion; navigation supports direct movement without trapping visitors. No interaction depends on animation to communicate meaning.
+Hover states act like editorial callouts: image cards zoom subtly, the project’s label illuminates, and buttons respond with fast displacement. The JAINAM / LAB modules use an expressive tab swap. Every interaction retains a clear static state and keyboard focus.
 
 ### Animation
-The hero has a single 500–700ms orchestrated entrance: marker, label, headline, and process card arrive in a short stagger using only opacity and transform. Sections reveal once on entry with 220–360ms offset transitions. Hover effects use short, tactile transforms and border/color changes. All non-essential movement is disabled under `prefers-reduced-motion`.
+The first fold has a short staged reveal of the hero typography, visual artifact, and CTA. On scroll, image modules arrive with a slight upward drift and labels appear through opacity only. Active project cards emit a restrained ember halo. Nothing loops except a nearly imperceptible hero light shift; all nonessential motion is disabled by `prefers-reduced-motion`.
 
 ### Typography System
-**Fraunces** is the display voice: expressive but disciplined at large sizes, set in title case and occasional italic emphasis. **Manrope** handles readable body copy, captions, and navigation with crisp geometry. **JetBrains Mono** is reserved for metadata, labels, section indices, and technical tags. Serif establishes curiosity; sans establishes clarity; monospace establishes evidence.
+**Bricolage Grotesque** is the large, sculptural headline voice, using tight tracking and controlled line breaks. **Manrope** supports clean, compact body copy. **DM Mono** carries navigation, labels, metadata, and candid project-stage language. There is no generic default sans and no ornate display serif.
 
 ### Brand Essence
-**JAINAM is a working record of a student builder turning practical questions into intelligent product experiments.**
+**JAINAM is a visual index of a student builder turning early ideas into intelligent product directions.**
 
-Personality: **curious, exacting, grounded.**
+Personality: **bold, curious, intentional.**
 
 ### Brand Voice
-Headlines are short, declarative, and concrete. Calls to action invite exploration rather than pressure. Microcopy names the real state of the work and never disguises a concept as a launch.
-
-Example lines: “Open the working notes.” and “Built around a real workflow. Still in concept.”
+Headlines are compact, visual, and direct; microcopy makes the state of each project legible without excuses. Example lines: “Ideas in active formation.” and “A real workflow. A concept taking shape.”
 
 ### Wordmark & Logo
-The wordmark is an intentionally spaced **JAINAM** set in condensed mono, paired with a custom three-stroke **J** mark that resembles a folded path, a bracket, and a course correction. The mark is graphic-only where space is limited and becomes a standalone favicon.
+The wordmark uses spaced, uppercase **JAINAM** beside the existing folded-path J mark. In the hero, “JAINAM” becomes a giant outline word that frames the visual artifact. The mark stays graphic-only for favicon and compact navigation use.
 
 ### Signature Brand Color
-**Field Brass — #C8954D.** A muted, ownable warm metal used only for orientation, active status, and invitations to explore.
+**Signal Ember — #FF4A13.**
 
 ## Style Decisions
 
-- The left rail is a continuous field-navigation device: brass indicates the reader’s actual scroll progress and position rather than functioning as isolated decoration.
-- The header uses the custom folded-path **J** and extended mono **JAINAM** wordmark at a confident, immediately legible scale.
-- Capabilities, process, strengths, and experience are treated as ruled, annotated ledger records rather than generic feature-card grids.
+- The hero combines poster-scale typography, a dark image-led composition, and a bright ember signal; it will not use fabricated metrics, client logos, or testimonials.
+- Project work becomes a curated visual mosaic, but every item retains an honest concept/planning status.
+- Warm orange-red is a navigational and compositional device, not a site-wide gradient.
+- Signal Ember is limited to illumination, labels, active states, rules, and selected visual crops; the achievement and contact sections return to near-black gallery spreads rather than becoming large color fields.
+- Each major spread includes one recognisable Signal Edition device: ghost type, asymmetric composition, image framing, or an evidence-labelled visual card.

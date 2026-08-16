@@ -23,7 +23,7 @@ export const portfolioData = {
     process: ["Idea", "Build", "Test", "Iterate", "Launch"],
     primaryCta: "Explore selected work",
     secondaryCta: "Read the notes",
-    art: "/manus-storage/jainam-hero-obsidian_028a98d7.jpg",
+    art: "/manus-storage/jainam-signal-hero_543adf6e.jpg",
   },
   about: {
     title: "A working record, not a finished story.",
@@ -67,7 +67,7 @@ export const portfolioData = {
       summary:
         "An AI-powered platform designed to act as a digital mentor for students — helping them understand their strengths, explore career opportunities, improve productivity, and make better decisions.",
       status: "In active product design and planning — implementation stack not yet finalized.",
-      media: "/manus-storage/focuspath-artifact_bf6fb7d7.jpg",
+      media: "/manus-storage/jainam-signal-focuspath_a2dda31b.jpg",
       contributions: [
         "Defined the product vision and core user experience.",
         "Designed strengths-and-weaknesses discovery, career exploration, and guidance concepts.",
@@ -147,6 +147,7 @@ export const portfolioData = {
       summary:
         "A student-focused community concept for ambitious students, coders, technology enthusiasts, and future founders: community building, networking, personal branding, future-focused learning.",
       status: "Concept stage.",
+      media: "/manus-storage/jainam-signal-project-grid_681cb0f5.jpg",
       contributions: [],
       caseStudy: {
         Problem:
