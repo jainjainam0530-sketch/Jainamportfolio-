@@ -186,7 +186,7 @@ export default function Home() {
       <AnimatePresence>
         {isImmersiveLoading ? <motion.div className="immersion-loader" role="status" aria-live="polite" initial={{ opacity: 1 }} exit={{ y: "-105%" }} transition={{ duration: 0.72, ease: [0.77, 0, 0.175, 1] }}>
           <div className="loader-grid" aria-hidden="true" />
-          <div className="loader-head"><img src="/manus-storage/jainam-mark_d137763b.png" alt="" /><span>JAINAM / SIGNAL EDITION</span></div>
+          <div className="loader-head"><span className="loader-mark-frame"><img src={brand.mark} alt="" /></span><span>JAINAM / SIGNAL EDITION</span></div>
           <div className="loader-center"><p>Preparing the portfolio</p><strong>{String(loadProgress).padStart(2, "0")}<i>%</i></strong><div className="loader-track"><span className="loader-progress" style={{ transform: `scaleX(${loadProgress / 100})` }} /><span className="loader-robot" style={{ left: `${Math.max(4, Math.min(96, loadProgress))}%` }} aria-hidden="true"><i className="robot-sprite"><i className="robot-antenna" /><i className="robot-head"><i className="robot-eye" /><i className="robot-eye" /></i><i className="robot-body" /><i className="robot-leg robot-leg-left" /><i className="robot-leg robot-leg-right" /></i></span></div><AnimatePresence mode="wait"><motion.p className="loader-hint" key={activeLoadingHint.label} initial={reduceMotion ? false : { opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={reduceMotion ? undefined : { opacity: 0, y: -5 }} transition={{ duration: 0.18 }}><span>0{loadingHints.indexOf(activeLoadingHint) + 1} / {activeLoadingHint.label}</span>{activeLoadingHint.message}</motion.p></AnimatePresence></div>
           <p className="loader-foot">Build / Learn / Iterate</p>
         </motion.div> : null}
@@ -195,7 +195,7 @@ export default function Home() {
       <div className="signal-cursor" ref={cursorRef} aria-hidden="true" />
       <header className="signal-header">
         <a className="signal-brand" href="#top" aria-label="Jainam — back to top">
-          <img src="/manus-storage/jainam-mark_d137763b.png" alt="" />
+          <span className="signal-brand-mark"><img src={brand.mark} alt="" /></span>
           <span>{brand.name}</span>
         </a>
         <nav className="signal-nav" aria-label="Primary navigation">

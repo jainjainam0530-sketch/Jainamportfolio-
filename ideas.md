@@ -77,3 +77,9 @@ The wordmark uses spaced, uppercase **JAINAM** beside the existing folded-path J
 - The opening uses a short branded preparation screen with an honest timed progress indicator and a clean exit into the existing hero; it does not claim to load data or simulate background activity.
 - The ghost wordmark, artifact, and narrative copy enter in a stagger after the loader clears, giving the first fold spatial depth without delaying access to navigation or content.
 - Visitors who prefer reduced motion bypass the loading screen and receive the finished hero immediately.
+
+## Premium Logo Direction
+
+- **Signal Monogram** is an abstract folded-path J mark: three angular strokes suggest a forward path, a circuit trace, and the initial J without relying on literal typography.
+- The mark uses ember orange against the obsidian field with a precise compact silhouette that scales from the header to the loader and favicon-sized placements.
+- It replaces the earlier generic mark while preserving the spaced JAINAM wordmark as the readable portfolio signature.

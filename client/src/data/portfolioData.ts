@@ -5,6 +5,7 @@
 export const portfolioData = {
   brand: {
     name: "JAINAM",
+    mark: "/manus-storage/jainam-premium-signal-mark_67417552.png",
     identity: "Student Builder · AI Explorer · Product Thinker",
     positioning:
       "I build intelligent products that turn real-world problems into useful experiences.",
