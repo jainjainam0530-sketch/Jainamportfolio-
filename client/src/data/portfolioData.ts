@@ -94,9 +94,14 @@ export const portfolioData = {
       status: "Early Android build available — continuing product iteration.",
       media: "/manus-storage/jainam-signal-focuspath_a2dda31b.jpg",
       externalAction: {
-        label: "Download early Android build",
-        detail: "FocusPath 1.0.11 APK · 49.6 MB · Opens MediaFire",
-        href: "https://www.mediafire.com/file/g6vcdjfg4f3nv8g/focuspath-1.0.11.apk/file",
+        label: "Get FocusPath",
+        detail: "FocusPath 1.0.18 Android release · Opens FocusPath",
+        href: "https://focuspath-mdhqpuez.manus.space/",
+      },
+      releaseAsset: {
+        label: "Direct APK download",
+        detail: "Version 1.0.18 · 49.6 MB · Android 8.0+",
+        href: "/manus-storage/focuspath-1.0.18_676b60d8.apk",
       },
       contributions: [
         "Identified career uncertainty as a student decision-making problem worth exploring.",

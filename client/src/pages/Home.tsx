@@ -257,7 +257,15 @@ export default function Home() {
                   <span className="project-number">{project.index}</span>
                   <span className="project-stage">{project.status}</span>
                 </motion.div>
-                <motion.div className="project-info" initial={reduceMotion ? false : { opacity: 0, x: index === 0 ? 42 : 18 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: index === 0 ? 0.8 : 0.5, delay: index === 0 ? 0.22 : index * 0.06 }}><p>{project.categories}</p><h3>{project.title}</h3><span>{project.role}</span><span className="project-focus">{project.focusLabel}</span><div className="project-info-bottom"><p>{project.summary}</p><details><summary>Case study <ChevronDown size={15} aria-hidden="true" /></summary><div className="case-grid">{Object.entries(project.caseStudy).map(([label, value]) => <div key={label}><b>{label}</b><p>{value}</p></div>)}</div></details>{"externalAction" in project && project.externalAction ? <motion.a className="project-external-action" href={project.externalAction.href} target="_blank" rel="noopener noreferrer" whileHover={reduceMotion ? undefined : { x: 5 }} whileTap={reduceMotion ? undefined : { scale: 0.98 }}><span><b>{project.externalAction.label}</b><small>{project.externalAction.detail}</small></span><Download size={17} aria-hidden="true" /></motion.a> : null}</div></motion.div>
+                <motion.div className="project-info" initial={reduceMotion ? false : { opacity: 0, x: index === 0 ? 42 : 18 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: index === 0 ? 0.8 : 0.5, delay: index === 0 ? 0.22 : index * 0.06 }}>
+                  <p>{project.categories}</p><h3>{project.title}</h3><span>{project.role}</span><span className="project-focus">{project.focusLabel}</span>
+                  <div className="project-info-bottom">
+                    <p>{project.summary}</p>
+                    <details><summary>Case study <ChevronDown size={15} aria-hidden="true" /></summary><div className="case-grid">{Object.entries(project.caseStudy).map(([label, value]) => <div key={label}><b>{label}</b><p>{value}</p></div>)}</div></details>
+                    {"externalAction" in project && project.externalAction ? <motion.a className="project-external-action" href={project.externalAction.href} target="_blank" rel="noopener noreferrer" whileHover={reduceMotion ? undefined : { x: 5 }} whileTap={reduceMotion ? undefined : { scale: 0.98 }}><span><b>{project.externalAction.label}</b><small>{project.externalAction.detail}</small></span><Download size={17} aria-hidden="true" /></motion.a> : null}
+                    {"releaseAsset" in project && project.releaseAsset ? (() => { const releaseAsset = project.releaseAsset as { href: string; label: string; detail: string }; return <a className="project-release-asset" href={releaseAsset.href} download><span>{releaseAsset.label}</span><small>{releaseAsset.detail}</small></a>; })() : null}
+                  </div>
+                </motion.div>
                 {project.contributions.length > 0 ? <div className="project-contributions"><span>Key contributions</span><ul>{project.contributions.map((contribution) => <li key={contribution}>{contribution}</li>)}</ul></div> : null}
               </motion.article>
             ))}

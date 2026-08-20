@@ -15,3 +15,4 @@
 - [ ] Check valid equivalents of the requested “Jainam’s Portfolio” domain and present availability before any purchase.
 - [ ] Preserve contact-message storage and owner notifications using Vercel-compatible services.
 - [ ] Publish the migrated portfolio at the free jainamportfolio.vercel.app address.
+- [x] Replace the FocusPath download action with the new 1.0.18 release website and retain the supplied APK as the current release asset.
