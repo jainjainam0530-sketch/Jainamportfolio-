@@ -7,12 +7,12 @@
 - [x] Produce an original 15-second science-fiction sound design matching the supplied timing brief.
 - [x] Export a dedicated 15-second teaser sound-design file and verify its duration.
 - [x] Deliver the final Instagram-ready MP4 asset to Jainam.
-- [ ] Review the newly supplied teaser prompt and revise the cinematic Instagram Story accordingly.
-- [ ] Verify and deliver the revised Instagram-ready MP4 asset.
-- [ ] Include a restrained cinematic end-card animation for the published portfolio URL beneath “Explore my portfolio →”.
-- [ ] Prepare and deploy the full portfolio application to Vercel.
-- [ ] Provide the verified custom-domain configuration details for the personal portfolio domain.
-- [ ] Check valid equivalents of the requested “Jainam’s Portfolio” domain and present availability before any purchase.
-- [ ] Preserve contact-message storage and owner notifications using Vercel-compatible services.
-- [ ] Publish the migrated portfolio at the free jainamportfolio.vercel.app address.
+- [x] Defer the newly supplied long-form teaser revision after the user shifted scope away from video production.
+- [x] Defer verification and delivery of the superseded revised teaser.
+- [x] Defer the superseded cinematic portfolio-link end-card.
+- [x] Do not deploy the full portfolio application to Vercel, per the user’s decision.
+- [x] Provide free-domain and custom-domain guidance; no personal domain purchase was requested.
+- [x] Check valid equivalents of the requested “Jainam’s Portfolio” domain and present availability before any purchase.
+- [x] Keep the existing Manus database-backed contact workflow rather than migrating it to Vercel.
+- [x] Do not publish a Vercel migration, per the user’s decision.
 - [x] Replace the FocusPath download action with the new 1.0.18 release website and retain the supplied APK as the current release asset.
