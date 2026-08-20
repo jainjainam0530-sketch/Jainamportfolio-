@@ -8,6 +8,7 @@ describe("Signal Field profile", () => {
       maxPixelRatio: 1.5,
       disablesOnCompactViewport: true,
       respectsReducedMotion: true,
+      usesPointerDepth: true,
     });
   });
 });

@@ -1,12 +1,13 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { Group } from "three";
+import type { Group, Mesh } from "three";
 
 export const signalFieldProfile = {
   ringCount: 14,
   maxPixelRatio: 1.5,
   disablesOnCompactViewport: true,
   respectsReducedMotion: true,
+  usesPointerDepth: true,
 } as const;
 
 type SignalRing = {
@@ -17,9 +18,11 @@ type SignalRing = {
   opacity: number;
 };
 
-function SignalTunnel() {
+function SignalTunnel({ pointer }: { pointer: React.MutableRefObject<{ x: number; y: number }> }) {
   const tunnelRef = useRef<Group>(null);
   const pulseRef = useRef<Group>(null);
+  const orbitRef = useRef<Group>(null);
+  const ringRefs = useRef<Array<Mesh | null>>([]);
   const rings = useMemo<SignalRing[]>(
     () =>
       Array.from({ length: signalFieldProfile.ringCount }, (_, index) => {
@@ -36,29 +39,46 @@ function SignalTunnel() {
     [],
   );
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock, camera }) => {
     const time = clock.getElapsedTime();
     const scrollRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     const scrollProgress = Math.min(1, window.scrollY / scrollRange);
 
     if (tunnelRef.current) {
-      tunnelRef.current.rotation.z = time * 0.026 + scrollProgress * 1.05;
-      tunnelRef.current.rotation.x = Math.sin(time * 0.13) * 0.09 + scrollProgress * 0.13;
-      tunnelRef.current.position.z = scrollProgress * 10.8;
-      tunnelRef.current.position.x = Math.sin(time * 0.1) * 0.16;
+      tunnelRef.current.rotation.z = time * 0.14 + scrollProgress * 1.55 + pointer.current.x * 0.2;
+      tunnelRef.current.rotation.x = Math.sin(time * 0.38) * 0.17 + scrollProgress * 0.22 - pointer.current.y * 0.12;
+      tunnelRef.current.position.z = scrollProgress * 12.6;
+      tunnelRef.current.position.x = Math.sin(time * 0.48) * 0.38 + pointer.current.x * 0.42;
+      tunnelRef.current.position.y = Math.cos(time * 0.34) * 0.2 - pointer.current.y * 0.28;
     }
     if (pulseRef.current) {
-      const scale = 0.76 + Math.sin(time * 1.15) * 0.08;
+      const scale = 0.82 + Math.sin(time * 1.85) * 0.16;
       pulseRef.current.scale.setScalar(scale);
-      pulseRef.current.rotation.x = time * 0.22;
-      pulseRef.current.rotation.y = time * 0.34;
+      pulseRef.current.rotation.x = time * 0.75;
+      pulseRef.current.rotation.y = time * 1.05;
+      pulseRef.current.position.x = Math.sin(time * 0.78) * 0.34;
+      pulseRef.current.position.y = Math.cos(time * 0.92) * 0.28;
     }
+    if (orbitRef.current) orbitRef.current.rotation.z = -time * 0.46;
+    ringRefs.current.forEach((mesh, index) => {
+      if (!mesh) return;
+      const ring = rings[index];
+      if (!ring) return;
+      mesh.rotation.z = ring.rotation[2] + time * (index % 2 === 0 ? 0.24 : -0.18);
+      mesh.rotation.x = ring.rotation[0] + Math.sin(time * 0.68 + index) * 0.12;
+      mesh.position.y = ring.position[1] + Math.cos(time * 0.7 + index * 0.6) * 0.18;
+      mesh.scale.setScalar(1 + Math.sin(time * 0.85 + index) * 0.055);
+    });
+    camera.position.x += (pointer.current.x * 0.72 + Math.sin(time * 0.3) * 0.24 - camera.position.x) * 0.032;
+    camera.position.y += (-pointer.current.y * 0.54 + Math.cos(time * 0.24) * 0.16 - camera.position.y) * 0.032;
+    camera.position.z += (7.7 + Math.sin(time * 0.48) * 0.44 - camera.position.z) * 0.025;
+    camera.lookAt(0, 0, -4.7);
   });
 
   return (
     <group ref={tunnelRef}>
       {rings.map((ring, index) => (
-        <mesh key={index} position={ring.position} rotation={ring.rotation}>
+        <mesh key={index} ref={(element) => { ringRefs.current[index] = element; }} position={ring.position} rotation={ring.rotation}>
           <torusGeometry args={[ring.radius, ring.tube, 6, 72]} />
           <meshBasicMaterial color={index % 4 === 0 ? "#ff4a13" : "#efeae1"} transparent opacity={ring.opacity} />
         </mesh>
@@ -73,12 +93,23 @@ function SignalTunnel() {
           <meshBasicMaterial color="#f3f0ea" wireframe transparent opacity={0.18} />
         </mesh>
       </group>
+      <group ref={orbitRef} position={[0, 0, -3.1]} rotation={[0.48, 0.18, 0]}>
+        <mesh scale={[1.25, .7, 1]}>
+          <torusGeometry args={[1.25, 0.012, 6, 96]} />
+          <meshBasicMaterial color="#ff4a13" transparent opacity={0.68} />
+        </mesh>
+        <mesh rotation={[0.8, 0.2, 1.6]} scale={[1.7, .7, 1]}>
+          <torusGeometry args={[1.25, 0.009, 6, 96]} />
+          <meshBasicMaterial color="#f3f0ea" transparent opacity={0.28} />
+        </mesh>
+      </group>
     </group>
   );
 }
 
 export default function SignalField() {
   const [enabled, setEnabled] = useState(false);
+  const pointer = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -87,9 +118,15 @@ export default function SignalField() {
     update();
     reducedMotion.addEventListener("change", update);
     compactViewport.addEventListener("change", update);
+    const handlePointerMove = (event: PointerEvent) => {
+      pointer.current.x = (event.clientX / window.innerWidth - 0.5) * 2;
+      pointer.current.y = (event.clientY / window.innerHeight - 0.5) * 2;
+    };
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
     return () => {
       reducedMotion.removeEventListener("change", update);
       compactViewport.removeEventListener("change", update);
+      window.removeEventListener("pointermove", handlePointerMove);
     };
   }, []);
 
@@ -100,7 +137,7 @@ export default function SignalField() {
       <Canvas dpr={[1, signalFieldProfile.maxPixelRatio]} gl={{ antialias: false, alpha: true }} camera={{ position: [0, 0, 8], fov: 43, near: 0.1, far: 80 }}>
         <color attach="background" args={["#080808"]} />
         <fog attach="fog" args={["#080808", 9, 38]} />
-        <SignalTunnel />
+        <SignalTunnel pointer={pointer} />
       </Canvas>
     </div>
   );

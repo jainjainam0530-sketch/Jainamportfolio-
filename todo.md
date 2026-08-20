@@ -19,3 +19,6 @@
 - [x] Analyze the supplied motion reference and define a responsive 3D visual system for the portfolio.
 - [x] Rebuild the portfolio presentation with immersive 3D graphics and scroll-driven motion while preserving verified content and all working actions.
 - [x] Validate the 3D experience across desktop and mobile, then publish the redesign.
+- [x] Diagnose why the current 3D layer does not present sufficiently visible motion.
+- [x] Add clearly perceptible animated camera, signal geometry, and interactive depth effects while retaining reduced-motion support.
+- [x] Validate and publish the visible-motion refinement across desktop and mobile.
