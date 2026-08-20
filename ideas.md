@@ -83,3 +83,11 @@ The wordmark uses spaced, uppercase **JAINAM** beside the existing folded-path J
 - **Signal Monogram** is an abstract folded-path J mark: three angular strokes suggest a forward path, a circuit trace, and the initial J without relying on literal typography.
 - The mark uses ember orange against the obsidian field with a precise compact silhouette that scales from the header to the loader and favicon-sized placements.
 - It replaces the earlier generic mark while preserving the spaced JAINAM wordmark as the readable portfolio signature.
+
+## 3D Graphic-Motion Redesign
+
+- The supplied motion reference translates into an original **Signal Field** environment: a dark, continuously advancing spatial lattice behind the existing portfolio, built from wireframe geometry, depth haze, slow camera drift, and a controlled ember signal rather than copied visual assets or copy.
+- The 3D scene remains a decorative canvas while all portfolio content stays as accessible, selectable HTML. Scrolling changes the camera field and interface depth without hijacking native scroll behavior.
+- Primary interfaces gain measured physical depth: black-glass panels tilt slightly with pointer movement, project cards sit on layered planes, and call-to-actions use a white-on-black cinematic capsule treatment rather than decorative effects.
+- The original Signal Edition palette remains intact: obsidian and soft white form the spatial architecture, while Signal Ember provides sparse light trails and active-state energy. The system avoids saturated cyberpunk color, visual noise, or fabricated product claims.
+- Mobile and reduced-motion modes use a lighter static gradient-grid field, ordinary document flow, and no continuous 3D camera animation to protect legibility, battery life, and vestibular comfort.

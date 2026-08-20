@@ -171,6 +171,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (!id.includes("node_modules")) return;
+          if (id.includes("@react-three") || id.includes("/three/")) return "three-runtime";
           if (id.includes("framer-motion")) return "motion-runtime";
           if (id.includes("@trpc") || id.includes("@tanstack")) return "data-client";
           if (id.includes("lucide-react")) return "icon-library";

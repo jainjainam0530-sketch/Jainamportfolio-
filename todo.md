@@ -16,3 +16,6 @@
 - [x] Keep the existing Manus database-backed contact workflow rather than migrating it to Vercel.
 - [x] Do not publish a Vercel migration, per the user’s decision.
 - [x] Replace the FocusPath download action with the new 1.0.18 release website and retain the supplied APK as the current release asset.
+- [x] Analyze the supplied motion reference and define a responsive 3D visual system for the portfolio.
+- [x] Rebuild the portfolio presentation with immersive 3D graphics and scroll-driven motion while preserving verified content and all working actions.
+- [x] Validate the 3D experience across desktop and mobile, then publish the redesign.

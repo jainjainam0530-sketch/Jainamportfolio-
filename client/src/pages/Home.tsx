@@ -2,7 +2,7 @@
  * Signal Edition — a black-and-ember editorial portfolio inspired by supplied references.
  * All verified claims, project states, contacts, and links remain in ../data/portfolioData.ts.
  */
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import {
   ArrowDownRight,
@@ -21,6 +21,8 @@ import {
 } from "lucide-react";
 import { portfolioData } from "@/data/portfolioData";
 import { trpc } from "@/lib/trpc";
+
+const SignalField = lazy(() => import("@/components/SignalField"));
 
 function SectionKicker({ number, title }: { number: string; title: string }) {
   return <p className="section-kicker"><span>{number}</span>{title}</p>;
@@ -182,7 +184,9 @@ export default function Home() {
   };
 
   return (
-    <div className={scrolled ? "signal-site is-scrolled" : "signal-site"}>
+    <>
+      <Suspense fallback={<div className="signal-field-fallback" aria-hidden="true" />}><SignalField /></Suspense>
+      <div className={scrolled ? "signal-site is-scrolled" : "signal-site"}>
       <AnimatePresence>
         {isImmersiveLoading ? <motion.div className="immersion-loader" role="status" aria-live="polite" initial={{ opacity: 1 }} exit={{ y: "-105%" }} transition={{ duration: 0.72, ease: [0.77, 0, 0.175, 1] }}>
           <div className="loader-grid" aria-hidden="true" />
@@ -306,6 +310,7 @@ export default function Home() {
       </main>
 
       <footer id="contact" className="signal-footer" aria-labelledby="contact-heading"><div className="signal-section"><motion.div {...inView}><p className="footer-label">JAINAM / Signal contact</p><div className="footer-layout"><div><h2 id="contact-heading">{contact.title}</h2><p>{contact.body}</p></div><a href={`mailto:${contact.email}`} className="footer-email"><Mail size={18} aria-hidden="true" /> {contact.email}</a></div></motion.div><motion.form {...inView} transition={{ duration: 0.58, delay: 0.18 }} className="contact-form" onSubmit={handleContactSubmit} noValidate><div className="contact-form-intro"><span>Send a message</span><p>Share a project, opportunity, or question. Your message is stored in Jainam’s portfolio inbox.</p></div><div className="contact-form-grid"><label>Name<input value={contactForm.name} onChange={(event) => setContactForm((current) => ({ ...current, name: event.target.value }))} name="name" autoComplete="name" minLength={2} maxLength={120} required /></label><label>Email<input value={contactForm.email} onChange={(event) => setContactForm((current) => ({ ...current, email: event.target.value }))} name="email" type="email" autoComplete="email" maxLength={320} required /></label><label className="contact-form-wide">Subject<input value={contactForm.subject} onChange={(event) => setContactForm((current) => ({ ...current, subject: event.target.value }))} name="subject" minLength={3} maxLength={160} required /></label><label className="contact-form-wide">Message<textarea value={contactForm.message} onChange={(event) => setContactForm((current) => ({ ...current, message: event.target.value }))} name="message" minLength={15} maxLength={5000} rows={5} required /></label><label className="contact-honeypot" aria-hidden="true">Company<input value={contactForm.company} onChange={(event) => setContactForm((current) => ({ ...current, company: event.target.value }))} name="company" tabIndex={-1} autoComplete="off" /></label></div><div className="contact-form-actions"><button type="submit" disabled={contactMutation.isPending}>{contactMutation.isPending ? "Sending message…" : "Send message"} <ArrowUpRight size={16} aria-hidden="true" /></button><div aria-live="polite">{contactSubmitted ? <p className="contact-success">Message sent. Thank you for reaching out.</p> : null}{contactMutation.error ? <p className="contact-error">{contactMutation.error.message}</p> : null}</div></div></motion.form><motion.div {...inView} transition={{ duration: 0.55, delay: 0.28 }} className="footer-bottom"><div className="social-line">{contact.social.map((social) => <a key={social.label} href={social.href} target="_blank" rel="noopener noreferrer"><SocialIcon label={social.label} />{social.label}<ArrowUpRight size={13} aria-hidden="true" /></a>)}</div><div><span>Languages / {contact.languages}</span><span>{brand.positioning}</span></div></motion.div></div></footer>
-    </div>
+      </div>
+    </>
   );
 }
