@@ -130,11 +130,7 @@ export default function SignalField() {
     };
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
 
-    // Initialize audio
-    audioRef.current = new Audio(AUDIO_URL);
-    audioRef.current.loop = true;
-    audioRef.current.volume = 0.4;
-
+    // Initialize audio lazily on user interaction
     return () => {
       reducedMotion.removeEventListener("change", update);
       compactViewport.removeEventListener("change", update);
@@ -146,20 +142,23 @@ export default function SignalField() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!audioRef.current) return;
-    if (isMuted) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play().catch((err) => {
-        console.warn("Audio playback failed:", err);
-        setIsMuted(true);
-      });
-    }
-  }, [isMuted]);
-
   const toggleSound = () => {
-    setIsMuted((prev) => !prev);
+    if (!audioRef.current) {
+      audioRef.current = new Audio(AUDIO_URL);
+      audioRef.current.loop = true;
+      audioRef.current.volume = 0.4;
+    }
+
+    if (isMuted) {
+      audioRef.current.play().then(() => {
+        setIsMuted(false);
+      }).catch((err) => {
+        console.warn("Audio playback failed:", err);
+      });
+    } else {
+      audioRef.current.pause();
+      setIsMuted(true);
+    }
   };
 
   if (!enabled) return <div className="signal-field-fallback" aria-hidden="true" />;
