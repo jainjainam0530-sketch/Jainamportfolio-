@@ -22,3 +22,4 @@
 - [x] Diagnose why the current 3D layer does not present sufficiently visible motion.
 - [x] Add clearly perceptible animated camera, signal geometry, and interactive depth effects while retaining reduced-motion support.
 - [x] Validate and publish the visible-motion refinement across desktop and mobile.
+- [x] Add a sound toggle for the opening 3D field to enhance the immersive experience.

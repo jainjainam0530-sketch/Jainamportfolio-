@@ -1,6 +1,8 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Group, Mesh } from "three";
+import { Volume2, VolumeX } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const signalFieldProfile = {
   ringCount: 14,
@@ -17,6 +19,8 @@ type SignalRing = {
   tube: number;
   opacity: number;
 };
+
+const AUDIO_URL = "/manus-storage/signal-field-ambient_04868133.wav";
 
 function SignalTunnel({ pointer }: { pointer: React.MutableRefObject<{ x: number; y: number }> }) {
   const tunnelRef = useRef<Group>(null);
@@ -109,7 +113,9 @@ function SignalTunnel({ pointer }: { pointer: React.MutableRefObject<{ x: number
 
 export default function SignalField() {
   const [enabled, setEnabled] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const pointer = useRef({ x: 0, y: 0 });
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -123,12 +129,38 @@ export default function SignalField() {
       pointer.current.y = (event.clientY / window.innerHeight - 0.5) * 2;
     };
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
+
+    // Initialize audio
+    audioRef.current = new Audio(AUDIO_URL);
+    audioRef.current.loop = true;
+    audioRef.current.volume = 0.4;
+
     return () => {
       reducedMotion.removeEventListener("change", update);
       compactViewport.removeEventListener("change", update);
       window.removeEventListener("pointermove", handlePointerMove);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
     };
   }, []);
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+    if (isMuted) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play().catch((err) => {
+        console.warn("Audio playback failed:", err);
+        setIsMuted(true);
+      });
+    }
+  }, [isMuted]);
+
+  const toggleSound = () => {
+    setIsMuted((prev) => !prev);
+  };
 
   if (!enabled) return <div className="signal-field-fallback" aria-hidden="true" />;
 
@@ -139,6 +171,18 @@ export default function SignalField() {
         <fog attach="fog" args={["#080808", 9, 38]} />
         <SignalTunnel pointer={pointer} />
       </Canvas>
+      
+      <div className="absolute bottom-8 right-8 z-50 pointer-events-auto">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={toggleSound}
+          className="rounded-full bg-black/40 border-porcelain/20 text-porcelain hover:bg-ember/20 hover:border-ember transition-all duration-300 backdrop-blur-md"
+          aria-label={isMuted ? "Unmute immersive sound" : "Mute immersive sound"}
+        >
+          {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+        </Button>
+      </div>
     </div>
   );
 }
