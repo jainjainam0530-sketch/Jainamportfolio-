@@ -114,6 +114,7 @@ function SignalTunnel({ pointer }: { pointer: React.MutableRefObject<{ x: number
 export default function SignalField() {
   const [enabled, setEnabled] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const pointer = useRef({ x: 0, y: 0 });
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -130,7 +131,12 @@ export default function SignalField() {
     };
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
 
-    // Initialize audio lazily on user interaction
+    // Preload audio
+    audioRef.current = new Audio(AUDIO_URL);
+    audioRef.current.loop = true;
+    audioRef.current.volume = 0.4;
+    audioRef.current.preload = "auto";
+
     return () => {
       reducedMotion.removeEventListener("change", update);
       compactViewport.removeEventListener("change", update);
@@ -142,19 +148,19 @@ export default function SignalField() {
     };
   }, []);
 
-  const toggleSound = () => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio(AUDIO_URL);
-      audioRef.current.loop = true;
-      audioRef.current.volume = 0.4;
-    }
+  const toggleSound = async () => {
+    if (!audioRef.current) return;
 
     if (isMuted) {
-      audioRef.current.play().then(() => {
+      setIsLoading(true);
+      try {
+        await audioRef.current.play();
         setIsMuted(false);
-      }).catch((err) => {
-        console.warn("Audio playback failed:", err);
-      });
+      } catch (err) {
+        console.error("Audio playback failed:", err);
+      } finally {
+        setIsLoading(false);
+      }
     } else {
       audioRef.current.pause();
       setIsMuted(true);
@@ -176,10 +182,17 @@ export default function SignalField() {
           variant="outline"
           size="icon"
           onClick={toggleSound}
-          className="rounded-full bg-black/40 border-porcelain/20 text-porcelain hover:bg-ember/20 hover:border-ember transition-all duration-300 backdrop-blur-md"
+          disabled={isLoading}
+          className="rounded-full bg-black/40 border-porcelain/20 text-porcelain hover:bg-ember/20 hover:border-ember transition-all duration-300 backdrop-blur-md disabled:opacity-50"
           aria-label={isMuted ? "Unmute immersive sound" : "Mute immersive sound"}
         >
-          {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          {isLoading ? (
+            <div className="w-4 h-4 border-2 border-porcelain/20 border-t-porcelain rounded-full animate-spin" />
+          ) : isMuted ? (
+            <VolumeX className="w-4 h-4" />
+          ) : (
+            <Volume2 className="w-4 h-4" />
+          )}
         </Button>
       </div>
     </div>
