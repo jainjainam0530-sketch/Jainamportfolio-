@@ -116,7 +116,11 @@ export default function SignalField() {
   const [isMuted, setIsMuted] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const pointer = useRef({ x: 0, y: 0 });
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const filterNodeRef = useRef<BiquadFilterNode | null>(null);
+  const audioBufferRef = useRef<AudioBuffer | null>(null);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -131,39 +135,100 @@ export default function SignalField() {
     };
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
 
-    // Preload audio
-    audioRef.current = new Audio(AUDIO_URL);
-    audioRef.current.loop = true;
-    audioRef.current.volume = 0.4;
-    audioRef.current.preload = "auto";
-
     return () => {
       reducedMotion.removeEventListener("change", update);
       compactViewport.removeEventListener("change", update);
       window.removeEventListener("pointermove", handlePointerMove);
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
       }
     };
   }, []);
 
-  const toggleSound = async () => {
-    if (!audioRef.current) return;
+  // Handle scroll-linked soundscape modulation
+  useEffect(() => {
+    if (!filterNodeRef.current || !gainNodeRef.current || !enabled || isMuted) return;
 
-    if (isMuted) {
-      setIsLoading(true);
-      try {
-        await audioRef.current.play();
+    const handleScroll = () => {
+      const scrollRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const scrollProgress = Math.min(1, window.scrollY / scrollRange);
+      
+      // Map scroll progress to filter frequency (low-pass)
+      // Top: bright, Bottom: deep/muffled
+      const freq = 20000 - (scrollProgress * 18000); 
+      filterNodeRef.current!.frequency.setTargetAtTime(freq, audioContextRef.current!.currentTime, 0.1);
+      
+      // Subtle volume modulation based on scroll
+      const volume = 0.3 + (Math.sin(scrollProgress * Math.PI) * 0.1);
+      gainNodeRef.current!.gain.setTargetAtTime(volume, audioContextRef.current!.currentTime, 0.1);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [enabled, isMuted]);
+
+  const initAudio = async () => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      const response = await fetch(AUDIO_URL);
+      const arrayBuffer = await response.arrayBuffer();
+      audioBufferRef.current = await audioContextRef.current.decodeAudioData(arrayBuffer);
+      
+      gainNodeRef.current = audioContextRef.current.createGain();
+      filterNodeRef.current = audioContextRef.current.createBiquadFilter();
+      
+      filterNodeRef.current.type = "lowpass";
+      filterNodeRef.current.frequency.value = 20000;
+      
+      gainNodeRef.current.gain.value = 0; // Start silent for fade-in
+      
+      filterNodeRef.current.connect(gainNodeRef.current);
+      gainNodeRef.current.connect(audioContextRef.current.destination);
+    }
+  };
+
+  const startPlayback = () => {
+    if (!audioContextRef.current || !audioBufferRef.current) return;
+    
+    sourceNodeRef.current = audioContextRef.current.createBufferSource();
+    sourceNodeRef.current.buffer = audioBufferRef.current;
+    sourceNodeRef.current.loop = true;
+    sourceNodeRef.current.connect(filterNodeRef.current!);
+    sourceNodeRef.current.start(0);
+    
+    // Fade in
+    gainNodeRef.current!.gain.setTargetAtTime(0.4, audioContextRef.current.currentTime, 1.5);
+  };
+
+  const stopPlayback = () => {
+    if (sourceNodeRef.current) {
+      sourceNodeRef.current.stop();
+      sourceNodeRef.current.disconnect();
+      sourceNodeRef.current = null;
+    }
+  };
+
+  const toggleSound = async () => {
+    if (isLoading) return;
+
+    try {
+      if (isMuted) {
+        setIsLoading(true);
+        await initAudio();
+        if (audioContextRef.current?.state === "suspended") {
+          await audioContextRef.current.resume();
+        }
+        startPlayback();
         setIsMuted(false);
-      } catch (err) {
-        console.error("Audio playback failed:", err);
-      } finally {
-        setIsLoading(false);
+      } else {
+        stopPlayback();
+        setIsMuted(true);
       }
-    } else {
-      audioRef.current.pause();
-      setIsMuted(true);
+    } catch (err) {
+      console.error("Soundscape interaction failed:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -183,15 +248,18 @@ export default function SignalField() {
           size="icon"
           onClick={toggleSound}
           disabled={isLoading}
-          className="rounded-full bg-black/40 border-porcelain/20 text-porcelain hover:bg-ember/20 hover:border-ember transition-all duration-300 backdrop-blur-md disabled:opacity-50"
-          aria-label={isMuted ? "Unmute immersive sound" : "Mute immersive sound"}
+          className={`rounded-full bg-black/40 border-porcelain/20 text-porcelain hover:bg-ember/20 hover:border-ember transition-all duration-500 backdrop-blur-md disabled:opacity-50 ${!isMuted ? 'shadow-[0_0_15px_rgba(255,74,19,0.3)] border-ember/40' : ''}`}
+          aria-label={isMuted ? "Unmute immersive soundscape" : "Mute immersive soundscape"}
         >
           {isLoading ? (
             <div className="w-4 h-4 border-2 border-porcelain/20 border-t-porcelain rounded-full animate-spin" />
           ) : isMuted ? (
             <VolumeX className="w-4 h-4" />
           ) : (
-            <Volume2 className="w-4 h-4" />
+            <div className="relative flex items-center justify-center">
+              <Volume2 className="w-4 h-4" />
+              <span className="absolute inset-0 rounded-full animate-ping bg-ember/20 scale-150" />
+            </div>
           )}
         </Button>
       </div>
