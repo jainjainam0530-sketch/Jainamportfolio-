@@ -20,7 +20,7 @@ type SignalRing = {
   opacity: number;
 };
 
-const AUDIO_URL = "/manus-storage/signal-field-ambient_04868133.wav";
+const AUDIO_URL = "/manus-storage/signal-field-melodic-ambient_504aac68.wav";
 
 function SignalTunnel({ pointer }: { pointer: React.MutableRefObject<{ x: number; y: number }> }) {
   const tunnelRef = useRef<Group>(null);
@@ -150,16 +150,23 @@ export default function SignalField() {
     if (!filterNodeRef.current || !gainNodeRef.current || !enabled || isMuted) return;
 
     const handleScroll = () => {
+      if (!audioContextRef.current) return;
       const scrollRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       const scrollProgress = Math.min(1, window.scrollY / scrollRange);
       
       // Map scroll progress to filter frequency (low-pass)
-      // Top: bright, Bottom: deep/muffled
-      const freq = 20000 - (scrollProgress * 18000); 
+      // Top: bright (20kHz), Bottom: deep (800Hz)
+      const freq = 20000 - (scrollProgress * 19200); 
       filterNodeRef.current!.frequency.setTargetAtTime(freq, audioContextRef.current!.currentTime, 0.1);
       
-      // Subtle volume modulation based on scroll
-      const volume = 0.3 + (Math.sin(scrollProgress * Math.PI) * 0.1);
+      // Map scroll progress to resonance (Q)
+      // Increase resonance slightly as we scroll down for a more "filtered" feel
+      const qValue = 1 + (scrollProgress * 4);
+      filterNodeRef.current!.Q.setTargetAtTime(qValue, audioContextRef.current!.currentTime, 0.1);
+      
+      // More noticeable volume modulation based on scroll
+      // Top: 0.5, Bottom: 0.25
+      const volume = 0.5 - (scrollProgress * 0.25);
       gainNodeRef.current!.gain.setTargetAtTime(volume, audioContextRef.current!.currentTime, 0.1);
     };
 
@@ -180,6 +187,7 @@ export default function SignalField() {
       
       filterNodeRef.current.type = "lowpass";
       filterNodeRef.current.frequency.value = 20000;
+      filterNodeRef.current.Q.value = 1;
       
       gainNodeRef.current.gain.value = 0; // Start silent for fade-in
       
@@ -197,8 +205,13 @@ export default function SignalField() {
     sourceNodeRef.current.connect(filterNodeRef.current!);
     sourceNodeRef.current.start(0);
     
+    // Initial scroll-based state
+    const scrollRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const scrollProgress = Math.min(1, window.scrollY / scrollRange);
+    const initialVolume = 0.5 - (scrollProgress * 0.25);
+    
     // Fade in
-    gainNodeRef.current!.gain.setTargetAtTime(0.4, audioContextRef.current.currentTime, 1.5);
+    gainNodeRef.current!.gain.setTargetAtTime(initialVolume, audioContextRef.current.currentTime, 1.2);
   };
 
   const stopPlayback = () => {
