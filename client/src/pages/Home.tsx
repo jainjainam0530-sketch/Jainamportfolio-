@@ -205,11 +205,11 @@ export default function Home() {
         <nav className="signal-nav" aria-label="Primary navigation">
           {navigation.map((item) => <a key={item.href} className={activeNav === item.href ? "is-active" : ""} href={item.href}>{item.label}</a>)}
         </nav>
-        <a className="header-cta" href={`mailto:${contact.email}`}>Let&apos;s connect <ArrowUpRight size={14} aria-hidden="true" /></a>
+        <a className="header-cta" href="#contact">Let&apos;s connect <ArrowUpRight size={14} aria-hidden="true" /></a>
         <button ref={mobileMenuButtonRef} className="mobile-menu" type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen(!menuOpen)}>
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
-        {menuOpen ? <nav ref={mobileNavRef} id="mobile-navigation" className="signal-mobile-nav" aria-label="Mobile navigation">{navigation.map((item) => <a key={item.href} className={activeNav === item.href ? "is-active" : ""} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</a>)}<a href={`mailto:${contact.email}`} onClick={() => setMenuOpen(false)}>Let&apos;s connect</a></nav> : null}
+        {menuOpen ? <nav ref={mobileNavRef} id="mobile-navigation" className="signal-mobile-nav" aria-label="Mobile navigation">{navigation.map((item) => <a key={item.href} className={activeNav === item.href ? "is-active" : ""} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</a>)}<a href="#contact" onClick={() => setMenuOpen(false)}>Let&apos;s connect</a></nav> : null}
       </header>
 
       <main id="top">
