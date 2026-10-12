@@ -1,5 +1,6 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { Group, Mesh } from "three";
 import { Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,27 @@ export const signalFieldProfile = {
   usesPointerDepth: true,
 } as const;
 
+export const signalAudioProfile = {
+  visualizerBars: 5,
+  topFrequency: 18000,
+  bottomFrequency: 2400,
+  topResonance: 0.8,
+  bottomResonance: 5,
+  topVolume: 0.44,
+  bottomVolume: 0.54,
+} as const;
+
+export function getScrollAudioState(progress: number) {
+  const normalized = Math.min(1, Math.max(0, progress));
+  const eased = normalized * normalized * (3 - 2 * normalized);
+
+  return {
+    frequency: Math.round(signalAudioProfile.topFrequency + (signalAudioProfile.bottomFrequency - signalAudioProfile.topFrequency) * eased),
+    resonance: Number((signalAudioProfile.topResonance + (signalAudioProfile.bottomResonance - signalAudioProfile.topResonance) * eased).toFixed(2)),
+    volume: Number((signalAudioProfile.topVolume + (signalAudioProfile.bottomVolume - signalAudioProfile.topVolume) * eased).toFixed(3)),
+  };
+}
+
 type SignalRing = {
   position: [number, number, number];
   rotation: [number, number, number];
@@ -21,6 +43,14 @@ type SignalRing = {
 };
 
 const AUDIO_URL = "/manus-storage/signal-field-melodic-ambient_504aac68.wav";
+const VISUALIZER_BANDS: Array<[number, number]> = [
+  [1, 4],
+  [4, 8],
+  [8, 15],
+  [15, 27],
+  [27, 46],
+];
+const IDLE_AUDIO_LEVELS = [0.16, 0.24, 0.2, 0.28, 0.18];
 
 function SignalTunnel({ pointer }: { pointer: React.MutableRefObject<{ x: number; y: number }> }) {
   const tunnelRef = useRef<Group>(null);
@@ -115,12 +145,16 @@ export default function SignalField() {
   const [enabled, setEnabled] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [audioLevels, setAudioLevels] = useState(IDLE_AUDIO_LEVELS);
+  const [audioScrollProgress, setAudioScrollProgress] = useState(0);
   const pointer = useRef({ x: 0, y: 0 });
   const audioContextRef = useRef<AudioContext | null>(null);
   const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
   const filterNodeRef = useRef<BiquadFilterNode | null>(null);
+  const analyserNodeRef = useRef<AnalyserNode | null>(null);
   const audioBufferRef = useRef<AudioBuffer | null>(null);
+  const frequencyDataRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -139,87 +173,138 @@ export default function SignalField() {
       reducedMotion.removeEventListener("change", update);
       compactViewport.removeEventListener("change", update);
       window.removeEventListener("pointermove", handlePointerMove);
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
+      if (sourceNodeRef.current) {
+        try {
+          sourceNodeRef.current.stop();
+        } catch {
+          // The source may already have stopped during teardown.
+        }
       }
+      if (audioContextRef.current) void audioContextRef.current.close();
     };
   }, []);
 
-  // Handle scroll-linked soundscape modulation
+  // Handle scroll-linked soundscape modulation and keep the visual readout in sync.
   useEffect(() => {
-    if (!filterNodeRef.current || !gainNodeRef.current || !enabled || isMuted) return;
+    if (!enabled) return;
 
     const handleScroll = () => {
-      if (!audioContextRef.current) return;
       const scrollRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const scrollProgress = Math.min(1, window.scrollY / scrollRange);
-      
-      // Map scroll progress to filter frequency (low-pass)
-      // Top: bright (20kHz), Bottom: deep (800Hz)
-      const freq = 20000 - (scrollProgress * 19200); 
-      filterNodeRef.current!.frequency.setTargetAtTime(freq, audioContextRef.current!.currentTime, 0.1);
-      
-      // Map scroll progress to resonance (Q)
-      // Increase resonance slightly as we scroll down for a more "filtered" feel
-      const qValue = 1 + (scrollProgress * 4);
-      filterNodeRef.current!.Q.setTargetAtTime(qValue, audioContextRef.current!.currentTime, 0.1);
-      
-      // More noticeable volume modulation based on scroll
-      // Top: 0.5, Bottom: 0.25
-      const volume = 0.5 - (scrollProgress * 0.25);
-      gainNodeRef.current!.gain.setTargetAtTime(volume, audioContextRef.current!.currentTime, 0.1);
+      const scrollProgress = Math.min(1, Math.max(0, window.scrollY / scrollRange));
+      setAudioScrollProgress(Math.round(scrollProgress * 100));
+
+      if (!audioContextRef.current || !filterNodeRef.current || !gainNodeRef.current || isMuted) return;
+      const state = getScrollAudioState(scrollProgress);
+      const currentTime = audioContextRef.current.currentTime;
+      filterNodeRef.current.frequency.setTargetAtTime(state.frequency, currentTime, 0.14);
+      filterNodeRef.current.Q.setTargetAtTime(state.resonance, currentTime, 0.14);
+      gainNodeRef.current.gain.setTargetAtTime(state.volume, currentTime, 0.22);
     };
 
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [enabled, isMuted]);
 
+  // Read the actual output signal at a gentle cadence so the visualizer follows the melody without re-rendering every frame.
+  useEffect(() => {
+    if (!enabled || isMuted || isLoading || !analyserNodeRef.current) {
+      setAudioLevels(IDLE_AUDIO_LEVELS);
+      return;
+    }
+
+    let animationFrame = 0;
+    let lastUpdate = 0;
+    const animateVisualizer = (timestamp: number) => {
+      if (timestamp - lastUpdate >= 64 && analyserNodeRef.current && frequencyDataRef.current) {
+        analyserNodeRef.current.getByteFrequencyData(frequencyDataRef.current);
+        const nextLevels = VISUALIZER_BANDS.map(([start, end]) => {
+          let total = 0;
+          for (let index = start; index < end; index += 1) total += frequencyDataRef.current?.[index] ?? 0;
+          const average = total / Math.max(1, end - start);
+          return Math.min(1, Math.max(0.12, average / 118));
+        });
+        setAudioLevels(nextLevels);
+        lastUpdate = timestamp;
+      }
+      animationFrame = window.requestAnimationFrame(animateVisualizer);
+    };
+
+    animationFrame = window.requestAnimationFrame(animateVisualizer);
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [enabled, isMuted, isLoading]);
+
   const initAudio = async () => {
     if (!audioContextRef.current) {
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      
+
       const response = await fetch(AUDIO_URL);
+      if (!response.ok) throw new Error(`Unable to load soundscape (${response.status})`);
       const arrayBuffer = await response.arrayBuffer();
       audioBufferRef.current = await audioContextRef.current.decodeAudioData(arrayBuffer);
-      
+
       gainNodeRef.current = audioContextRef.current.createGain();
       filterNodeRef.current = audioContextRef.current.createBiquadFilter();
-      
+      analyserNodeRef.current = audioContextRef.current.createAnalyser();
+      frequencyDataRef.current = new Uint8Array(new ArrayBuffer(analyserNodeRef.current.frequencyBinCount));
+
       filterNodeRef.current.type = "lowpass";
-      filterNodeRef.current.frequency.value = 20000;
-      filterNodeRef.current.Q.value = 1;
-      
-      gainNodeRef.current.gain.value = 0; // Start silent for fade-in
-      
+      filterNodeRef.current.frequency.value = signalAudioProfile.topFrequency;
+      filterNodeRef.current.Q.value = signalAudioProfile.topResonance;
+      gainNodeRef.current.gain.value = 0;
+      analyserNodeRef.current.fftSize = 128;
+      analyserNodeRef.current.smoothingTimeConstant = 0.78;
+
       filterNodeRef.current.connect(gainNodeRef.current);
-      gainNodeRef.current.connect(audioContextRef.current.destination);
+      gainNodeRef.current.connect(analyserNodeRef.current);
+      analyserNodeRef.current.connect(audioContextRef.current.destination);
     }
   };
 
   const startPlayback = () => {
-    if (!audioContextRef.current || !audioBufferRef.current) return;
-    
-    sourceNodeRef.current = audioContextRef.current.createBufferSource();
-    sourceNodeRef.current.buffer = audioBufferRef.current;
-    sourceNodeRef.current.loop = true;
-    sourceNodeRef.current.connect(filterNodeRef.current!);
-    sourceNodeRef.current.start(0);
-    
-    // Initial scroll-based state
+    if (!audioContextRef.current || !audioBufferRef.current || !filterNodeRef.current || !gainNodeRef.current) return;
+
+    const source = audioContextRef.current.createBufferSource();
+    source.buffer = audioBufferRef.current;
+    source.loop = true;
+    source.connect(filterNodeRef.current);
+    source.start(0);
+    sourceNodeRef.current = source;
+
     const scrollRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const scrollProgress = Math.min(1, window.scrollY / scrollRange);
-    const initialVolume = 0.5 - (scrollProgress * 0.25);
-    
-    // Fade in
-    gainNodeRef.current!.gain.setTargetAtTime(initialVolume, audioContextRef.current.currentTime, 1.2);
+    const scrollProgress = Math.min(1, Math.max(0, window.scrollY / scrollRange));
+    const state = getScrollAudioState(scrollProgress);
+    const currentTime = audioContextRef.current.currentTime;
+    filterNodeRef.current.frequency.setValueAtTime(state.frequency, currentTime);
+    filterNodeRef.current.Q.setValueAtTime(state.resonance, currentTime);
+    gainNodeRef.current.gain.cancelScheduledValues(currentTime);
+    gainNodeRef.current.gain.setValueAtTime(0, currentTime);
+    gainNodeRef.current.gain.setTargetAtTime(state.volume, currentTime, 0.9);
   };
 
   const stopPlayback = () => {
-    if (sourceNodeRef.current) {
-      sourceNodeRef.current.stop();
-      sourceNodeRef.current.disconnect();
-      sourceNodeRef.current = null;
+    const source = sourceNodeRef.current;
+    const context = audioContextRef.current;
+    if (!source) return;
+
+    if (context && gainNodeRef.current) {
+      const currentTime = context.currentTime;
+      gainNodeRef.current.gain.cancelScheduledValues(currentTime);
+      gainNodeRef.current.gain.setTargetAtTime(0, currentTime, 0.08);
+      try {
+        source.stop(currentTime + 0.2);
+      } catch {
+        // The source may already be scheduled to stop.
+      }
+    } else {
+      try {
+        source.stop();
+      } catch {
+        // The source may already have stopped.
+      }
     }
+    source.disconnect();
+    sourceNodeRef.current = null;
   };
 
   const toggleSound = async () => {
@@ -229,9 +314,7 @@ export default function SignalField() {
       if (isMuted) {
         setIsLoading(true);
         await initAudio();
-        if (audioContextRef.current?.state === "suspended") {
-          await audioContextRef.current.resume();
-        }
+        if (audioContextRef.current?.state === "suspended") await audioContextRef.current.resume();
         startPlayback();
         setIsMuted(false);
       } else {
@@ -248,14 +331,25 @@ export default function SignalField() {
   if (!enabled) return <div className="signal-field-fallback" aria-hidden="true" />;
 
   return (
-    <div className="signal-field" aria-hidden="true">
-      <Canvas dpr={[1, signalFieldProfile.maxPixelRatio]} gl={{ antialias: false, alpha: true }} camera={{ position: [0, 0, 8], fov: 43, near: 0.1, far: 80 }}>
-        <color attach="background" args={["#080808"]} />
-        <fog attach="fog" args={["#080808", 9, 38]} />
-        <SignalTunnel pointer={pointer} />
-      </Canvas>
-      
-      <div className="absolute bottom-8 right-8 z-50 pointer-events-auto">
+    <div className="signal-field">
+      <div className="signal-field-canvas" aria-hidden="true">
+        <Canvas dpr={[1, signalFieldProfile.maxPixelRatio]} gl={{ antialias: false, alpha: true }} camera={{ position: [0, 0, 8], fov: 43, near: 0.1, far: 80 }}>
+          <color attach="background" args={["#080808"]} />
+          <fog attach="fog" args={["#080808", 9, 38]} />
+          <SignalTunnel pointer={pointer} />
+        </Canvas>
+      </div>
+
+      {createPortal(<div className={`signal-audio-control ${!isMuted ? "is-active" : ""}`} aria-label="Immersive soundscape controls">
+        <div className="signal-audio-readout">
+          <div className="signal-audio-visualizer" aria-hidden="true">
+            {audioLevels.map((level, index) => <span key={index} style={{ height: `${Math.round(level * 100)}%` }} />)}
+          </div>
+          <div className="signal-audio-meta">
+            <span className="signal-audio-status" aria-live="polite">{isLoading ? "Loading signal" : isMuted ? "Sound off" : "Signal active"}</span>
+            <span className="signal-audio-detail">{isMuted ? "Muted by default" : `Scroll ${String(audioScrollProgress).padStart(2, "0")}%`}</span>
+          </div>
+        </div>
         <Button
           variant="outline"
           size="icon"
@@ -263,6 +357,7 @@ export default function SignalField() {
           disabled={isLoading}
           className={`rounded-full bg-black/40 border-porcelain/20 text-porcelain hover:bg-ember/20 hover:border-ember transition-all duration-500 backdrop-blur-md disabled:opacity-50 ${!isMuted ? 'shadow-[0_0_15px_rgba(255,74,19,0.3)] border-ember/40' : ''}`}
           aria-label={isMuted ? "Unmute immersive soundscape" : "Mute immersive soundscape"}
+          aria-busy={isLoading}
         >
           {isLoading ? (
             <div className="w-4 h-4 border-2 border-porcelain/20 border-t-porcelain rounded-full animate-spin" />
@@ -275,7 +370,7 @@ export default function SignalField() {
             </div>
           )}
         </Button>
-      </div>
+      </div>, document.body)}
     </div>
   );
 }
