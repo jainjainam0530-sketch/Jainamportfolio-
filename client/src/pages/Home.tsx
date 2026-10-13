@@ -3,7 +3,7 @@
  * All verified claims, project states, contacts, and links remain in ../data/portfolioData.ts.
  */
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -55,6 +55,8 @@ export default function Home() {
   const smoothScroll = useSpring(scrollYProgress, { stiffness: 120, damping: 28, restDelta: 0.001 });
   const heroWordmarkY = useTransform(smoothScroll, [0, 0.32], [0, 105]);
   const heroArtifactY = useTransform(smoothScroll, [0, 0.28], [0, -38]);
+  const heroTiltX = useSpring(useMotionValue(0), { stiffness: 180, damping: 24, mass: 0.45 });
+  const heroTiltY = useSpring(useMotionValue(0), { stiffness: 180, damping: 24, mass: 0.45 });
   const { brand, navigation, hero, loadingHints, about, status, projects, skills, process, strengths, experience, achievements, exploring, philosophy, journey, lab, resume, contact } = portfolioData;
   const resumeAvailable = Boolean(resume.url && (resume.url.startsWith("/manus-storage/") || /^https?:\/\//.test(resume.url)));
   const activeLoadingHint = loadingHints.find((hint) => loadProgress <= hint.threshold) ?? loadingHints[loadingHints.length - 1];
@@ -161,6 +163,20 @@ export default function Home() {
     heroGlowRef.current.style.setProperty("--glow-y", `${((event.clientY - bounds.top) / bounds.height) * 100}%`);
   };
 
+  const updateHeroTilt = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (reduceMotion || !window.matchMedia("(pointer: fine)").matches) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const normalizedX = (event.clientX - bounds.left) / bounds.width - 0.5;
+    const normalizedY = (event.clientY - bounds.top) / bounds.height - 0.5;
+    heroTiltX.set(normalizedY * -4.5);
+    heroTiltY.set(normalizedX * 4.5);
+  };
+
+  const resetHeroTilt = () => {
+    heroTiltX.set(0);
+    heroTiltY.set(0);
+  };
+
   const handleLabTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
     const keyToIndex: Record<string, number> = {
       ArrowDown: (index + 1) % lab.modules.length,
@@ -226,9 +242,9 @@ export default function Home() {
               <motion.div className="hero-buttons" initial={reduceMotion ? false : { opacity: 0, y: 16 }} animate={reduceMotion || introReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }} transition={{ duration: 0.52, delay: 0.82 }}><a href="#work" className="signal-button">Explore selected work <ArrowDownRight size={17} aria-hidden="true" /></a>{resumeAvailable ? <a href={resume.url} target="_blank" rel="noopener noreferrer" className="hero-resume-button">View resume <FileText size={15} aria-hidden="true" /></a> : null}<a href="#about" className="underlined-link">Read the notes <MoveRight size={16} aria-hidden="true" /></a></motion.div>
               <motion.div className="hero-live-signal" aria-live="polite" initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={reduceMotion || introReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }} transition={{ duration: 0.45, delay: 0.94 }}><span><i />{hero.liveLabel}</span><AnimatePresence mode="wait"><motion.strong key={exploring[liveFocusIndex]} initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={reduceMotion ? undefined : { opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>{exploring[liveFocusIndex]}</motion.strong></AnimatePresence></motion.div>
             </motion.div>
-            <motion.div className="signal-hero-art" style={reduceMotion ? undefined : { y: heroArtifactY }} initial={reduceMotion ? false : { opacity: 0, scale: 0.93 }} animate={reduceMotion || introReady ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.93 }} transition={{ duration: 1.06, delay: 0.24, ease: "easeOut" }}>
+            <motion.div className="signal-hero-art" onPointerMove={updateHeroTilt} onPointerLeave={resetHeroTilt} style={reduceMotion ? undefined : { y: heroArtifactY }} initial={reduceMotion ? false : { opacity: 0, scale: 0.93 }} animate={reduceMotion || introReady ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.93 }} transition={{ duration: 1.06, delay: 0.24, ease: "easeOut" }}>
               <div className="hero-orbit-system" aria-hidden="true"><span className="hero-orbit hero-orbit-one"><i /></span><span className="hero-orbit hero-orbit-two"><i /></span><span className="hero-orbit hero-orbit-three"><i /></span><span className="hero-orbit-core"><i /><b /></span><small>SIGNAL / 001</small></div>
-              <motion.img src={hero.art} alt="Anonymous chrome sculpture illuminated by an ember-red ribbon of light" initial={reduceMotion ? false : { clipPath: "inset(12% 0 12% 0)", scale: 1.12 }} animate={reduceMotion || introReady ? { clipPath: "inset(0% 0 0% 0)", scale: 1 } : { clipPath: "inset(12% 0 12% 0)", scale: 1.12 }} transition={{ duration: 1.12, delay: 0.3, ease: "easeOut" }} />
+              <motion.img style={reduceMotion ? undefined : { rotateX: heroTiltX, rotateY: heroTiltY, transformPerspective: 1000 }} src={hero.art} alt="Anonymous chrome sculpture illuminated by an ember-red ribbon of light" initial={reduceMotion ? false : { clipPath: "inset(12% 0 12% 0)", scale: 1.12 }} animate={reduceMotion || introReady ? { clipPath: "inset(0% 0 0% 0)", scale: 1 } : { clipPath: "inset(12% 0 12% 0)", scale: 1.12 }} transition={{ duration: 1.12, delay: 0.3, ease: "easeOut" }} />
               <motion.span className="art-frame frame-one" initial={reduceMotion ? false : { opacity: 0, x: -28, y: -28 }} animate={reduceMotion || introReady ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x: -28, y: -28 }} transition={{ duration: 0.6, delay: 0.75 }} /><motion.span className="art-frame frame-two" initial={reduceMotion ? false : { opacity: 0, x: 28, y: 28 }} animate={reduceMotion || introReady ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x: 28, y: 28 }} transition={{ duration: 0.6, delay: 0.85 }} />
               <motion.div className="hero-stage-card" initial={reduceMotion ? false : { opacity: 0, y: 32 }} animate={reduceMotion || introReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }} transition={{ duration: 0.56, delay: 0.94 }}><span>Current state</span><strong>Student / Builder / AI Explorer</strong><small>Ideas in active formation.</small></motion.div>
             </motion.div>
