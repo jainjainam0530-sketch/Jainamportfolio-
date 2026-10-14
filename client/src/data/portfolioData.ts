@@ -5,7 +5,7 @@
 export const portfolioData = {
   brand: {
     name: "JAINAM",
-    mark: "/manus-storage/jainam-premium-signal-mark_67417552.png",
+    mark: "/jainam-signal-mark.svg",
     identity: "Student Builder · AI Explorer · Product Thinker",
     positioning:
       "I build intelligent products that turn real-world problems into useful experiences.",
@@ -33,7 +33,7 @@ export const portfolioData = {
     process: ["Idea", "Build", "Test", "Iterate", "Launch"],
     primaryCta: "Explore selected work",
     secondaryCta: "Read the notes",
-    art: "/manus-storage/jainam-signal-hero_543adf6e.jpg",
+    art: "https://jainamfolio-q6eaygh3.manus.space/manus-storage/jainam-signal-hero_543adf6e.jpg",
   },
   loadingHints: [
     { threshold: 24, label: "Perspective", message: "Start with the problem, not the feature." },
@@ -92,7 +92,7 @@ export const portfolioData = {
       summary:
         "An early student career-guidance app direction for people who need a clearer way to connect their interests with possible career paths and practical next steps.",
       status: "Early Android build available — continuing product iteration.",
-      media: "/manus-storage/jainam-signal-focuspath_a2dda31b.jpg",
+      media: "https://jainamfolio-q6eaygh3.manus.space/manus-storage/jainam-signal-focuspath_a2dda31b.jpg",
       externalAction: {
         label: "Get FocusPath",
         detail: "FocusPath 1.0.18 Android release · Opens FocusPath",
@@ -101,7 +101,7 @@ export const portfolioData = {
       releaseAsset: {
         label: "Direct APK download",
         detail: "Version 1.0.18 · 49.6 MB · Android 8.0+",
-        href: "/manus-storage/focuspath-1.0.18_676b60d8.apk",
+        href: "https://jainamfolio-q6eaygh3.manus.space/manus-storage/focuspath-1.0.18_676b60d8.apk",
       },
       contributions: [
         "Identified career uncertainty as a student decision-making problem worth exploring.",
@@ -134,7 +134,7 @@ export const portfolioData = {
       summary:
         "An AI-powered developer assistant concept designed to automate repetitive tasks after software development: source-code analysis, technology-stack detection, project organization, documentation generation, GitHub preparation, configuration generation, commit messages, and deployment workflows.",
       status: "Concept stage — technical architecture not yet finalized.",
-      media: "/manus-storage/launchflow-artifact_b71eb3f6.jpg",
+      media: "https://jainamfolio-q6eaygh3.manus.space/manus-storage/launchflow-artifact_b71eb3f6.jpg",
       contributions: [],
       caseStudy: {
         Problem:
@@ -160,7 +160,7 @@ export const portfolioData = {
         "A digital billing and customer-management solution concept designed to modernize a traditional family-business workflow: customer management, digital billing, bill generation, organized records.",
       status:
         "Concept stage — designed around a real family business's actual workflow, technology not yet finalized.",
-      media: "/manus-storage/billbook-artifact_6fac11df.jpg",
+      media: "https://jainamfolio-q6eaygh3.manus.space/manus-storage/billbook-artifact_6fac11df.jpg",
       contributions: [],
       caseStudy: {
         Problem:
@@ -185,7 +185,7 @@ export const portfolioData = {
       summary:
         "A student-focused community concept for ambitious students, coders, technology enthusiasts, and future founders: community building, networking, personal branding, future-focused learning.",
       status: "Concept stage.",
-      media: "/manus-storage/jainam-signal-project-grid_681cb0f5.jpg",
+      media: "https://jainamfolio-q6eaygh3.manus.space/manus-storage/jainam-signal-project-grid_681cb0f5.jpg",
       contributions: [],
       caseStudy: {
         Problem:
@@ -356,7 +356,7 @@ export const portfolioData = {
   resume: {
     title: "The concise record.",
     body: "A concise PDF record of my background, selected work, and areas of interest.",
-    url: "/manus-storage/jainam-jain-resume_e5213426.pdf",
+    url: "https://jainamfolio-q6eaygh3.manus.space/manus-storage/jainam-jain-resume_e5213426.pdf",
     fileLabel: "Jainam Jain — Resume (PDF)",
   },
   contact: {

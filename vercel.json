@@ -6,14 +6,6 @@
     {
       "source": "/api/:path*",
       "destination": "https://jainamfolio-q6eaygh3.manus.space/api/:path*"
-    },
-    {
-      "source": "/manus-storage/:path*",
-      "destination": "https://jainamfolio-q6eaygh3.manus.space/manus-storage/:path*"
-    },
-    {
-      "source": "/:path*",
-      "destination": "/index.html"
     }
   ]
 }

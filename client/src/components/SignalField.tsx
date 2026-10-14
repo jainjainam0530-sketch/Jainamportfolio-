@@ -42,7 +42,7 @@ type SignalRing = {
   opacity: number;
 };
 
-const AUDIO_URL = "/manus-storage/signal-field-melodic-ambient_504aac68.wav";
+const AUDIO_URL = "https://jainamfolio-q6eaygh3.manus.space/manus-storage/signal-field-melodic-ambient_504aac68.wav";
 const VISUALIZER_BANDS: Array<[number, number]> = [
   [1, 4],
   [4, 8],
